@@ -1,4 +1,8 @@
 defmodule Pontinho.Factory do
+  @moduledoc """
+  Tests factories
+  """
+
   use ExMachina.Ecto, repo: Pontinho.Repo
 
   def game_factory do
