@@ -7,6 +7,7 @@ defmodule Pontinho.CreateDeck do
   @suits ["clubs", "diamonds", "hearts", "spades"]
   @shuffle_times 10
 
+  @spec run() :: list(map)
   def run do
     @values
     |> Enum.map(fn value ->
