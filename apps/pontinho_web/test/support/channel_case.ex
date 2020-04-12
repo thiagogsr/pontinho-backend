@@ -17,6 +17,8 @@ defmodule PontinhoWeb.ChannelCase do
 
   use ExUnit.CaseTemplate
 
+  alias Ecto.Adapters.SQL.Sandbox
+
   using do
     quote do
       # Import conveniences for testing with channels
@@ -28,10 +30,10 @@ defmodule PontinhoWeb.ChannelCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Pontinho.Repo)
+    :ok = Sandbox.checkout(Pontinho.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Pontinho.Repo, {:shared, self()})
+      Sandbox.mode(Pontinho.Repo, {:shared, self()})
     end
 
     :ok

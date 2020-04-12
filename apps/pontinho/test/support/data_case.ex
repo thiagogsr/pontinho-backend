@@ -16,6 +16,8 @@ defmodule Pontinho.DataCase do
 
   use ExUnit.CaseTemplate
 
+  alias Ecto.Adapters.SQL.Sandbox
+
   using do
     quote do
       alias Pontinho.Repo
@@ -28,10 +30,10 @@ defmodule Pontinho.DataCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Pontinho.Repo)
+    :ok = Sandbox.checkout(Pontinho.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Pontinho.Repo, {:shared, self()})
+      Sandbox.mode(Pontinho.Repo, {:shared, self()})
     end
 
     :ok
