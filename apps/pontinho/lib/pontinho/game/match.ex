@@ -12,8 +12,7 @@ defmodule Pontinho.Match do
 
   schema "matches" do
     field :cards, {:array, :map}
-    field :joker_suit, :string
-    field :joker_value, :string
+    field :joker, :map
     belongs_to :game, Game
     belongs_to :croupier, Player
 
