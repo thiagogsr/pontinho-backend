@@ -9,6 +9,5 @@ defmodule Pontinho.Repo.Migrations.CreateGames do
 
       timestamps()
     end
-
   end
 end
