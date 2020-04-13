@@ -13,7 +13,6 @@ defmodule Pontinho.CreateGame do
     |> change()
     |> put_change(:betting_table, betting_table)
     |> validate_length(:betting_table, min: 5, max: 11)
-    |> put_change(:status, "waiting_players")
     |> Repo.insert()
   end
 end

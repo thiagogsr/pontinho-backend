@@ -5,7 +5,8 @@ defmodule Pontinho.JoinGame do
 
   alias Pontinho.{Game, Player, Repo}
 
-  import Ecto.{Changeset, Query}
+  import Ecto.Changeset
+  import Ecto.Query, only: [from: 2]
 
   @default_points 99
 

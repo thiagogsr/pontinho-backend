@@ -8,7 +8,6 @@ defmodule Pontinho.CreateGameTest do
 
     assert {:ok, %Game{} = game} = CreateGame.run(betting_table)
     assert game.betting_table == betting_table
-    assert game.status == "waiting_players"
   end
 
   test "returns a changeset error" do

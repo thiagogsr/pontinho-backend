@@ -10,7 +10,6 @@ defmodule Pontinho.Game do
 
   schema "games" do
     field :betting_table, {:array, :integer}
-    field :status, :string
 
     timestamps()
   end
