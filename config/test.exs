@@ -8,6 +8,9 @@ config :pontinho, Pontinho.Repo,
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
+config :pontinho,
+  deck_shuffle_times: 0
+
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :pontinho_web, PontinhoWeb.Endpoint,

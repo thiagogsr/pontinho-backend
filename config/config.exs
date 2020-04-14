@@ -13,6 +13,9 @@ use Mix.Config
 config :pontinho,
   ecto_repos: [Pontinho.Repo]
 
+config :pontinho,
+  deck_shuffle_times: 10
+
 config :pontinho_web,
   ecto_repos: [Pontinho.Repo],
   generators: [context_app: :pontinho, binary_id: true]

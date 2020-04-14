@@ -5,7 +5,7 @@ defmodule Pontinho.CreateDeck do
 
   @values ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
   @suits ["clubs", "diamonds", "hearts", "spades"]
-  @shuffle_times 10
+  @shuffle_times Application.get_env(:pontinho, :deck_shuffle_times)
 
   @spec run() :: list(map)
   def run do
