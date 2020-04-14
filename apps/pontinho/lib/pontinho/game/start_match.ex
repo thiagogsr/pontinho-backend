@@ -62,13 +62,13 @@ defmodule Pontinho.StartMatch do
   end
 
   defp build_match_players(players, deck) do
-    players_rounds = players ++ players ++ players
+    players_rounds = List.flatten([players, players, players])
 
     %{match_players: match_players, deck: deck} =
       Enum.reduce(players_rounds, %{match_players: %{}, deck: deck}, fn player, acc ->
         current_cards = get_in(acc, [:match_players, player.id, :cards]) || []
         {taked_cards, deck} = Deck.take_random_cards(acc[:deck], 3)
-        new_cards = current_cards ++ taked_cards
+        new_cards = List.flatten([current_cards, taked_cards])
 
         acc
         |> put_in([:match_players, player.id], %{player: player, cards: new_cards})
