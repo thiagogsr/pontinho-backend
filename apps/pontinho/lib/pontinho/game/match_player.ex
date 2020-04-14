@@ -11,7 +11,7 @@ defmodule Pontinho.MatchPlayer do
   @foreign_key_type :binary_id
 
   schema "match_players" do
-    field :cards, {:array, :map}
+    field :hand, {:array, :map}
     belongs_to :match, Match
     belongs_to :player, Player
 

@@ -13,11 +13,11 @@ defmodule Pontinho.StartMatchTest do
     assert {:ok, %Match{} = match} = StartMatch.run(game)
     assert match.croupier.id == first_player.id
     assert match.game == game
-    assert length(match.cards) == 104 - players_count * 9 - 1
-    assert match.trash == []
+    assert length(match.stock) == 104 - players_count * 9 - 1
+    assert match.discard_pile == []
     refute is_nil(match.joker)
     assert length(match.match_players) == players_count
-    assert Enum.all?(match.match_players, fn match_player -> length(match_player.cards) == 9 end)
+    assert Enum.all?(match.match_players, fn match_player -> length(match_player.hand) == 9 end)
   end
 
   test "creates a match to a started game" do
@@ -29,11 +29,11 @@ defmodule Pontinho.StartMatchTest do
     assert {:ok, %Match{} = match} = StartMatch.run(game)
     assert match.croupier.id == second_player.id
     assert match.game == game
-    assert length(match.cards) == 104 - players_count * 9 - 1
-    assert match.trash == []
+    assert length(match.stock) == 104 - players_count * 9 - 1
+    assert match.discard_pile == []
     refute is_nil(match.joker)
     assert length(match.match_players) == players_count
-    assert Enum.all?(match.match_players, fn match_player -> length(match_player.cards) == 9 end)
+    assert Enum.all?(match.match_players, fn match_player -> length(match_player.hand) == 9 end)
   end
 
   test "returns error when there is 1 player" do

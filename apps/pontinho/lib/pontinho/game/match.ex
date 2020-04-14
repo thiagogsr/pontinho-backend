@@ -11,8 +11,8 @@ defmodule Pontinho.Match do
   @foreign_key_type :binary_id
 
   schema "matches" do
-    field :cards, {:array, :map}
-    field :trash, {:array, :map}
+    field :stock, {:array, :map}
+    field :discard_pile, {:array, :map}
     field :joker, :map
     field :first_card, :map
     belongs_to :game, Game

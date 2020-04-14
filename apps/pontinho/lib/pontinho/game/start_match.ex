@@ -13,10 +13,10 @@ defmodule Pontinho.StartMatch do
     deck = CreateDeck.run()
     players = get_players(game)
     croupier = get_croupier(game, players)
-    {[joker], deck} = Deck.take_random_cards(deck, 1)
+    {[joker], stock} = Deck.take_random_cards(deck, 1)
 
     game
-    |> match_changeset(deck, joker, croupier, players)
+    |> match_changeset(stock, joker, croupier, players)
     |> Repo.insert()
   end
 
@@ -49,38 +49,44 @@ defmodule Pontinho.StartMatch do
     Repo.one(query)
   end
 
-  defp match_changeset(game, deck, joker, croupier, players) do
-    %{match_players: match_players, deck: deck} = build_match_players(players, deck)
-    match_attributes = %{match_players: match_players, cards: deck, trash: [], joker: joker}
+  defp match_changeset(game, stock, joker, croupier, players) do
+    %{match_players: match_players, stock: stock} = build_match_players(players, stock)
+
+    match_attributes = %{
+      match_players: match_players,
+      stock: stock,
+      discard_pile: [],
+      joker: joker
+    }
 
     %Match{}
-    |> cast(match_attributes, [:cards, :trash, :joker])
+    |> cast(match_attributes, [:stock, :discard_pile, :joker])
     |> put_assoc(:game, game)
     |> put_assoc(:croupier, croupier)
     |> cast_assoc(:match_players, with: &match_player_changeset/2)
     |> validate_length(:match_players, min: 2, max: 9)
   end
 
-  defp build_match_players(players, deck) do
+  defp build_match_players(players, stock) do
     players_rounds = List.flatten([players, players, players])
 
-    %{match_players: match_players, deck: deck} =
-      Enum.reduce(players_rounds, %{match_players: %{}, deck: deck}, fn player, acc ->
-        current_cards = get_in(acc, [:match_players, player.id, :cards]) || []
-        {taked_cards, deck} = Deck.take_random_cards(acc[:deck], 3)
-        new_cards = List.flatten([current_cards, taked_cards])
+    %{match_players: match_players, stock: stock} =
+      Enum.reduce(players_rounds, %{match_players: %{}, stock: stock}, fn player, acc ->
+        hand = get_in(acc, [:match_players, player.id, :hand]) || []
+        {cards, stock} = Deck.take_random_cards(acc[:stock], 3)
+        new_hand = List.flatten([hand, cards])
 
         acc
-        |> put_in([:match_players, player.id], %{player: player, cards: new_cards})
-        |> put_in([:deck], deck)
+        |> put_in([:match_players, player.id], %{player: player, hand: new_hand})
+        |> put_in([:stock], stock)
       end)
 
-    %{match_players: Map.values(match_players), deck: deck}
+    %{match_players: Map.values(match_players), stock: stock}
   end
 
   defp match_player_changeset(match_player, %{player: player} = attributes) do
     match_player
-    |> cast(attributes, [:cards])
+    |> cast(attributes, [:hand])
     |> put_assoc(:player, player)
   end
 end
