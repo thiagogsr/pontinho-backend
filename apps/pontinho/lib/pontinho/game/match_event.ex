@@ -5,7 +5,7 @@ defmodule Pontinho.MatchEvent do
 
   use Ecto.Schema
 
-  alias Pontinho.{Match, Player}
+  alias Pontinho.{Match, MatchPlayer}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -14,7 +14,7 @@ defmodule Pontinho.MatchEvent do
     field :cards, {:array, :map}
     field :type, :string
     belongs_to :match, Match
-    belongs_to :player, Player
+    belongs_to :match_player, MatchPlayer
 
     timestamps()
   end
