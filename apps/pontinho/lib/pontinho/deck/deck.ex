@@ -9,4 +9,10 @@ defmodule Pontinho.Deck do
     rest_cards = cards -- taked_cards
     {taked_cards, rest_cards}
   end
+
+  @spec buy(list(map)) :: {map, list(map)}
+  def buy(cards) do
+    [card | deck] = cards
+    {card, deck}
+  end
 end

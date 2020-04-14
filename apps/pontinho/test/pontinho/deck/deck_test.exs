@@ -12,4 +12,14 @@ defmodule Pontinho.DeckTest do
       assert length(rest_cards) == 101
     end
   end
+
+  describe "buy/1" do
+    test "returns the first card and the rest of cards" do
+      cards = CreateDeck.run()
+      {card, deck} = Deck.buy(cards)
+
+      assert %{value: _, suit: _} = card
+      assert length(deck) == 103
+    end
+  end
 end
