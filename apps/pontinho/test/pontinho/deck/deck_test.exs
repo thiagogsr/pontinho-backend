@@ -22,4 +22,16 @@ defmodule Pontinho.DeckTest do
       assert length(deck) == 103
     end
   end
+
+  describe "take_cards/2" do
+    test "returns the cards except the cards to be taked" do
+      cards = CreateDeck.run()
+      cards_to_be_taked = [%{value: "2", suit: "diamonds"}, %{value: "J", suit: "spades"}]
+      deck = Deck.take_cards(cards, cards_to_be_taked)
+
+      assert length(deck) == 102
+      assert Enum.count(deck, &(&1 == %{value: "2", suit: "diamonds"})) == 1
+      assert Enum.count(deck, &(&1 == %{value: "J", suit: "spades"})) == 1
+    end
+  end
 end
