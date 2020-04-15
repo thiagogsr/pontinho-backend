@@ -15,7 +15,6 @@ defmodule Pontinho.Match do
     field :discard_pile, {:array, :map}
     field :pre_joker, :map
     field :joker, :map
-    field :first_card, :map
     belongs_to :game, Game
     belongs_to :croupier, Player
     has_many :match_players, MatchPlayer

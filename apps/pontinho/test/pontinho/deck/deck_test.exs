@@ -35,11 +35,11 @@ defmodule Pontinho.DeckTest do
     end
   end
 
-  describe "take_cards/2" do
+  describe "remove_cards/2" do
     test "returns the cards except the cards to be taked" do
       deck = CreateDeck.run()
       cards_to_be_taked = [%{value: "2", suit: "diamonds"}, %{value: "J", suit: "spades"}]
-      stock = Deck.take_cards(deck, cards_to_be_taked)
+      stock = Deck.remove_cards(deck, cards_to_be_taked)
 
       assert length(stock) == 102
       assert Enum.count(stock, &(&1 == %{value: "2", suit: "diamonds"})) == 1
@@ -60,6 +60,44 @@ defmodule Pontinho.DeckTest do
 
     test "returns the next card for any else" do
       assert %{value: "2", suit: "diamonds"} = Deck.next_card(%{value: "A", suit: "diamonds"})
+    end
+  end
+
+  describe "replace_card/3" do
+    test "replaces the old card by the new card" do
+      old_card = %{value: "2", suit: "diamonds"}
+      new_card = %{value: "10", suit: "hearts"}
+
+      cards = [
+        %{value: "9", suit: "hearts"},
+        %{value: "2", suit: "diamonds"},
+        %{value: "J", suit: "hearts"}
+      ]
+
+      assert Deck.replace_card(cards, old_card, new_card) ==
+               [
+                 %{value: "9", suit: "hearts"},
+                 %{value: "10", suit: "hearts"},
+                 %{value: "J", suit: "hearts"}
+               ]
+    end
+
+    test "returns the same cards when replacement is not found" do
+      old_card = %{value: "3", suit: "diamonds"}
+      new_card = %{value: "10", suit: "hearts"}
+
+      cards = [
+        %{value: "9", suit: "hearts"},
+        %{value: "2", suit: "diamonds"},
+        %{value: "J", suit: "hearts"}
+      ]
+
+      assert Deck.replace_card(cards, old_card, new_card) ==
+               [
+                 %{value: "9", suit: "hearts"},
+                 %{value: "2", suit: "diamonds"},
+                 %{value: "J", suit: "hearts"}
+               ]
     end
   end
 end

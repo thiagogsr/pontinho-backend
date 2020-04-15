@@ -89,6 +89,8 @@ defmodule Pontinho.StartMatch do
   defp match_player_changeset(match_player, %{player: player} = attributes) do
     match_player
     |> cast(attributes, [:hand])
+    |> put_change(:ask_beat, false)
+    |> put_change(:false_beat, false)
     |> put_assoc(:player, player)
   end
 end

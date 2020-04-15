@@ -12,6 +12,10 @@ defmodule Pontinho.MatchPlayer do
 
   schema "match_players" do
     field :hand, {:array, :map}
+    field :first_card, :map
+    field :discard_pile_card, :map
+    field :ask_beat, :boolean
+    field :false_beat, :boolean
     belongs_to :match, Match
     belongs_to :player, Player
 
