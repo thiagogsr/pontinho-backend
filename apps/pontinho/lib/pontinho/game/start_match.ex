@@ -13,10 +13,10 @@ defmodule Pontinho.StartMatch do
     deck = CreateDeck.run()
     players = get_players(game)
     croupier = get_croupier(game, players)
-    {[joker], stock} = Deck.take_random_cards(deck, 1)
+    {[joker], _} = Deck.take_random_cards(deck, 1)
 
     game
-    |> match_changeset(stock, joker, croupier, players)
+    |> match_changeset(deck, joker, croupier, players)
     |> Repo.insert()
   end
 

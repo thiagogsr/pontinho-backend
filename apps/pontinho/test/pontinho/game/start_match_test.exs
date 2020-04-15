@@ -13,7 +13,7 @@ defmodule Pontinho.StartMatchTest do
     assert {:ok, %Match{} = match} = StartMatch.run(game)
     assert match.croupier.id == first_player.id
     assert match.game == game
-    assert length(match.stock) == 104 - players_count * 9 - 1
+    assert length(match.stock) == 104 - players_count * 9
     assert match.discard_pile == []
     refute is_nil(match.joker)
     assert length(match.match_players) == players_count
@@ -29,7 +29,7 @@ defmodule Pontinho.StartMatchTest do
     assert {:ok, %Match{} = match} = StartMatch.run(game)
     assert match.croupier.id == second_player.id
     assert match.game == game
-    assert length(match.stock) == 104 - players_count * 9 - 1
+    assert length(match.stock) == 104 - players_count * 9
     assert match.discard_pile == []
     refute is_nil(match.joker)
     assert length(match.match_players) == players_count
