@@ -29,12 +29,12 @@ defmodule Pontinho.Collection.ValidateSequence do
   defp validate(first_card, tail_cards, joker) do
     {first_index, _} = first_card
 
-    Enum.reduce_while(tail_cards, first_card, fn {index, _} = card, {past_index, _} = past ->
+    Enum.reduce_while(tail_cards, first_card, fn {index, suit} = card, {past_index, _} ->
       cond do
         king_ace_two?(index, past_index, first_index) -> {:halt, :error}
         ace_after_king?(index, past_index) -> {:cont, card}
         greater_index?(index, past_index) -> {:cont, card}
-        joker?(card, past, joker) -> {:cont, joker}
+        joker?(card, joker) -> {:cont, {past_index + 1, suit}}
         true -> {:halt, :error}
       end
     end)
@@ -52,7 +52,7 @@ defmodule Pontinho.Collection.ValidateSequence do
     current_index - past_index == 1
   end
 
-  defp joker?(current_card, past_card, joker) do
-    !is_nil(joker) && (current_card == joker || past_card == joker)
+  defp joker?(current_card, joker) do
+    !is_nil(joker) && current_card == joker
   end
 end

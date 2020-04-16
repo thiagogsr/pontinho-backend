@@ -116,6 +116,19 @@ defmodule Pontinho.CollectionTest do
       assert {:error, "invalid sequence"} = Collection.validate(cards, joker, beat)
     end
 
+    test "returns error when the sequence is unordered with joker" do
+      cards = [
+        %{value: "J", suit: "hearts"},
+        %{value: "K", suit: "spades"},
+        %{value: "A", suit: "hearts"}
+      ]
+
+      joker = %{value: "K", suit: "spades"}
+      beat = false
+
+      assert {:error, "invalid sequence"} = Collection.validate(cards, joker, beat)
+    end
+
     test "returns ok then it is a trio without a joker" do
       cards = [
         %{value: "3", suit: "hearts"},
