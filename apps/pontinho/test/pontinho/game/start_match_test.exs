@@ -3,7 +3,7 @@ defmodule Pontinho.StartMatchTest do
 
   import Pontinho.Factory
 
-  alias Pontinho.{Match, StartMatch}
+  alias Pontinho.{Deck, Match, StartMatch}
 
   test "creates a match" do
     game = insert(:game)
@@ -13,9 +13,10 @@ defmodule Pontinho.StartMatchTest do
     assert {:ok, %Match{} = match} = StartMatch.run(game)
     assert match.croupier.id == first_player.id
     assert match.game == game
-    assert length(match.stock) == 104 - players_count * 9
+    assert length(match.stock) == 104 - players_count * 9 - 1
     assert match.discard_pile == []
-    refute is_nil(match.joker)
+    refute is_nil(match.pre_joker)
+    assert match.joker == Deck.next_card(match.pre_joker)
     assert length(match.match_players) == players_count
     assert Enum.all?(match.match_players, fn match_player -> length(match_player.hand) == 9 end)
   end
@@ -29,9 +30,10 @@ defmodule Pontinho.StartMatchTest do
     assert {:ok, %Match{} = match} = StartMatch.run(game)
     assert match.croupier.id == second_player.id
     assert match.game == game
-    assert length(match.stock) == 104 - players_count * 9
+    assert length(match.stock) == 104 - players_count * 9 - 1
     assert match.discard_pile == []
-    refute is_nil(match.joker)
+    refute is_nil(match.pre_joker)
+    assert match.joker == Deck.next_card(match.pre_joker)
     assert length(match.match_players) == players_count
     assert Enum.all?(match.match_players, fn match_player -> length(match_player.hand) == 9 end)
   end

@@ -26,6 +26,7 @@ defmodule Pontinho.Factory do
     %Pontinho.Match{
       stock: [%{value: "2", suit: "diamonds"}],
       discard_pile: [],
+      pre_joker: %{value: "A", suit: "diamonds"},
       joker: %{value: "2", suit: "diamonds"},
       game: build(:game),
       croupier: build(:player)

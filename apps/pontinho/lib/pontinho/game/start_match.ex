@@ -13,10 +13,11 @@ defmodule Pontinho.StartMatch do
     deck = CreateDeck.run()
     players = get_players(game)
     croupier = get_croupier(game, players)
-    {[joker], _} = Deck.take_random_cards(deck, 1)
+    {[pre_joker], stock} = Deck.take_random_cards(deck, 1)
+    joker = Deck.next_card(pre_joker)
 
     game
-    |> match_changeset(deck, joker, croupier, players)
+    |> match_changeset(stock, pre_joker, joker, croupier, players)
     |> Repo.insert()
   end
 
@@ -49,18 +50,19 @@ defmodule Pontinho.StartMatch do
     Repo.one(query)
   end
 
-  defp match_changeset(game, stock, joker, croupier, players) do
+  defp match_changeset(game, stock, pre_joker, joker, croupier, players) do
     %{match_players: match_players, stock: stock} = build_match_players(players, stock)
 
     match_attributes = %{
       match_players: match_players,
       stock: stock,
       discard_pile: [],
+      pre_joker: pre_joker,
       joker: joker
     }
 
     %Match{}
-    |> cast(match_attributes, [:stock, :discard_pile, :joker])
+    |> cast(match_attributes, [:stock, :discard_pile, :pre_joker, :joker])
     |> put_assoc(:game, game)
     |> put_assoc(:croupier, croupier)
     |> cast_assoc(:match_players, with: &match_player_changeset/2)

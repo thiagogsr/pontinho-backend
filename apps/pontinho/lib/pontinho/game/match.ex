@@ -13,6 +13,7 @@ defmodule Pontinho.Match do
   schema "matches" do
     field :stock, {:array, :map}
     field :discard_pile, {:array, :map}
+    field :pre_joker, :map
     field :joker, :map
     field :first_card, :map
     belongs_to :game, Game

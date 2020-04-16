@@ -34,4 +34,18 @@ defmodule Pontinho.Deck do
   def value_index(value) do
     Enum.find_index(@values, &(&1 == value))
   end
+
+  @spec next_card(map) :: map()
+  def next_card(%{value: value, suit: suit}) do
+    last_index = Enum.count(@values) - 1
+
+    next_index =
+      case value_index(value) do
+        ^last_index -> 0
+        index -> index + 1
+      end
+
+    next_value = Enum.at(@values, next_index)
+    %{value: next_value, suit: suit}
+  end
 end

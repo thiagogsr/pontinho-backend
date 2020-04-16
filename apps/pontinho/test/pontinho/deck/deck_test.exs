@@ -52,4 +52,14 @@ defmodule Pontinho.DeckTest do
       assert Deck.value_index("J") == 10
     end
   end
+
+  describe "next_card/1" do
+    test "returns ACE when the card is a KING" do
+      assert %{value: "A", suit: "hearts"} = Deck.next_card(%{value: "K", suit: "hearts"})
+    end
+
+    test "returns the next card for any else" do
+      assert %{value: "2", suit: "diamonds"} = Deck.next_card(%{value: "A", suit: "diamonds"})
+    end
+  end
 end
