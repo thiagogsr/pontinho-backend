@@ -13,6 +13,7 @@ defmodule Pontinho.Game do
   schema "games" do
     field :betting_table, {:array, :integer}
     belongs_to :winner, Player
+    has_many :players, Player
 
     timestamps()
   end
