@@ -17,6 +17,7 @@ defmodule Pontinho.Match do
     field :joker, :map
     belongs_to :game, Game
     belongs_to :croupier, Player
+    belongs_to :winner, Player
     has_many :match_players, MatchPlayer
 
     timestamps()

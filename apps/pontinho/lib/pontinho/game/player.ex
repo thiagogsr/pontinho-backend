@@ -16,6 +16,7 @@ defmodule Pontinho.Player do
     field :playing, :boolean
     field :points, :integer
     field :sequence, :integer
+    field :balance, :integer
     belongs_to :game, Game
 
     timestamps()
