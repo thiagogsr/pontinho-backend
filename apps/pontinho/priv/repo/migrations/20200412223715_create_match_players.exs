@@ -18,5 +18,11 @@ defmodule Pontinho.Repo.Migrations.CreateMatchPlayers do
     end
 
     create unique_index(:match_players, [:match_id, :player_id])
+
+    alter table(:matches) do
+      add :winner_id, references(:match_players, on_delete: :nothing, type: :binary_id)
+    end
+
+    create index(:matches, [:winner_id])
   end
 end

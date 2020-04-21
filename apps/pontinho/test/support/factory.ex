@@ -38,6 +38,7 @@ defmodule Pontinho.Factory do
   def match_player_factory do
     %Pontinho.MatchPlayer{
       hand: Enum.take_random(@deck, 9),
+      ask_beat: false,
       false_beat: false,
       match: build(:match),
       player: build(:player)
