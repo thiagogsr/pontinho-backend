@@ -23,7 +23,7 @@ defmodule Pontinho.Collection.ValidateSequence do
   defp convert_card(card) when is_nil(card), do: nil
 
   defp convert_card(card) do
-    {Deck.value_index(card.value), card.suit}
+    {Deck.value_index(card["value"]), card["suit"]}
   end
 
   defp validate(first_card, tail_cards, joker) do

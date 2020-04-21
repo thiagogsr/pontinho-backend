@@ -14,9 +14,9 @@ defmodule Pontinho.CreateMatchCollectionTest do
 
   test "inserts a match collection", %{match: match, match_player: match_player} do
     cards = [
-      %{value: "2", suit: "diamonds"},
-      %{value: "3", suit: "diamonds"},
-      %{value: "4", suit: "diamonds"}
+      %{"value" => "2", "suit" => "diamonds"},
+      %{"value" => "3", "suit" => "diamonds"},
+      %{"value" => "4", "suit" => "diamonds"}
     ]
 
     type = "sequence"
@@ -32,8 +32,8 @@ defmodule Pontinho.CreateMatchCollectionTest do
     match_player: match_player
   } do
     cards = [
-      %{value: "2", suit: "diamonds"},
-      %{value: "3", suit: "diamonds"}
+      %{"value" => "2", "suit" => "diamonds"},
+      %{"value" => "3", "suit" => "diamonds"}
     ]
 
     type = "sequence"

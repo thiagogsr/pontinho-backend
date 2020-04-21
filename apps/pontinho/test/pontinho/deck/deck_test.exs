@@ -30,7 +30,7 @@ defmodule Pontinho.DeckTest do
       deck = CreateDeck.run()
       {card, stock} = Deck.buy(deck)
 
-      assert %{value: _, suit: _} = card
+      assert %{"value" => _, "suit" => _} = card
       assert length(stock) == 103
     end
   end
@@ -38,12 +38,17 @@ defmodule Pontinho.DeckTest do
   describe "remove_cards/2" do
     test "returns the cards except the cards to be taked" do
       deck = CreateDeck.run()
-      cards_to_be_taked = [%{value: "2", suit: "diamonds"}, %{value: "J", suit: "spades"}]
+
+      cards_to_be_taked = [
+        %{"value" => "2", "suit" => "diamonds"},
+        %{"value" => "J", "suit" => "spades"}
+      ]
+
       stock = Deck.remove_cards(deck, cards_to_be_taked)
 
       assert length(stock) == 102
-      assert Enum.count(stock, &(&1 == %{value: "2", suit: "diamonds"})) == 1
-      assert Enum.count(stock, &(&1 == %{value: "J", suit: "spades"})) == 1
+      assert Enum.count(stock, &(&1 == %{"value" => "2", "suit" => "diamonds"})) == 1
+      assert Enum.count(stock, &(&1 == %{"value" => "J", "suit" => "spades"})) == 1
     end
   end
 
@@ -55,48 +60,50 @@ defmodule Pontinho.DeckTest do
 
   describe "next_card/1" do
     test "returns ACE when the card is a KING" do
-      assert %{value: "A", suit: "hearts"} = Deck.next_card(%{value: "K", suit: "hearts"})
+      assert %{"value" => "A", "suit" => "hearts"} =
+               Deck.next_card(%{"value" => "K", "suit" => "hearts"})
     end
 
     test "returns the next card for any else" do
-      assert %{value: "2", suit: "diamonds"} = Deck.next_card(%{value: "A", suit: "diamonds"})
+      assert %{"value" => "2", "suit" => "diamonds"} =
+               Deck.next_card(%{"value" => "A", "suit" => "diamonds"})
     end
   end
 
   describe "replace_card/3" do
     test "replaces the old card by the new card" do
-      old_card = %{value: "2", suit: "diamonds"}
-      new_card = %{value: "10", suit: "hearts"}
+      old_card = %{"value" => "2", "suit" => "diamonds"}
+      new_card = %{"value" => "10", "suit" => "hearts"}
 
       cards = [
-        %{value: "9", suit: "hearts"},
-        %{value: "2", suit: "diamonds"},
-        %{value: "J", suit: "hearts"}
+        %{"value" => "9", "suit" => "hearts"},
+        %{"value" => "2", "suit" => "diamonds"},
+        %{"value" => "J", "suit" => "hearts"}
       ]
 
       assert Deck.replace_card(cards, old_card, new_card) ==
                [
-                 %{value: "9", suit: "hearts"},
-                 %{value: "10", suit: "hearts"},
-                 %{value: "J", suit: "hearts"}
+                 %{"value" => "9", "suit" => "hearts"},
+                 %{"value" => "10", "suit" => "hearts"},
+                 %{"value" => "J", "suit" => "hearts"}
                ]
     end
 
     test "returns the same cards when replacement is not found" do
-      old_card = %{value: "3", suit: "diamonds"}
-      new_card = %{value: "10", suit: "hearts"}
+      old_card = %{"value" => "3", "suit" => "diamonds"}
+      new_card = %{"value" => "10", "suit" => "hearts"}
 
       cards = [
-        %{value: "9", suit: "hearts"},
-        %{value: "2", suit: "diamonds"},
-        %{value: "J", suit: "hearts"}
+        %{"value" => "9", "suit" => "hearts"},
+        %{"value" => "2", "suit" => "diamonds"},
+        %{"value" => "J", "suit" => "hearts"}
       ]
 
       assert Deck.replace_card(cards, old_card, new_card) ==
                [
-                 %{value: "9", suit: "hearts"},
-                 %{value: "2", suit: "diamonds"},
-                 %{value: "J", suit: "hearts"}
+                 %{"value" => "9", "suit" => "hearts"},
+                 %{"value" => "2", "suit" => "diamonds"},
+                 %{"value" => "J", "suit" => "hearts"}
                ]
     end
   end

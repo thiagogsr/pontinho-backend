@@ -28,8 +28,8 @@ defmodule Pontinho.Factory do
     %Pontinho.Match{
       stock: @deck,
       discard_pile: [],
-      pre_joker: %{value: "A", suit: "diamonds"},
-      joker: %{value: "2", suit: "diamonds"},
+      pre_joker: %{"value" => "A", "suit" => "diamonds"},
+      joker: %{"value" => "2", "suit" => "diamonds"},
       game: build(:game),
       croupier: build(:player)
     }
@@ -48,9 +48,9 @@ defmodule Pontinho.Factory do
   def match_collection_factory do
     %Pontinho.MatchCollection{
       cards: [
-        %{value: "2", suit: "diamonds"},
-        %{value: "3", suit: "diamonds"},
-        %{value: "4", suit: "diamonds"}
+        %{"value" => "2", "suit" => "diamonds"},
+        %{"value" => "3", "suit" => "diamonds"},
+        %{"value" => "4", "suit" => "diamonds"}
       ],
       type: "sequence",
       match: build(:match),

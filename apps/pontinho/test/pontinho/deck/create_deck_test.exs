@@ -7,7 +7,7 @@ defmodule Pontinho.CreateDeckTest do
     deck = CreateDeck.run()
     assert length(deck) == 104
 
-    assert Enum.count(deck, fn %{value: value, suit: suit} ->
+    assert Enum.count(deck, fn %{"value" => value, "suit" => suit} ->
              value == "A" && suit == "spades"
            end) == 2
   end

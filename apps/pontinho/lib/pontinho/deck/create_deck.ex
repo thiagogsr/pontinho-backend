@@ -12,7 +12,7 @@ defmodule Pontinho.CreateDeck do
     Deck.values()
     |> Enum.map(fn value ->
       Enum.map(Deck.suits(), fn suit ->
-        [%{value: value, suit: suit}, %{value: value, suit: suit}]
+        [%{"value" => value, "suit" => suit}, %{"value" => value, "suit" => suit}]
       end)
     end)
     |> List.flatten()

@@ -13,7 +13,7 @@ defmodule Pontinho.Collection do
   def validate(cards, joker, beat) do
     {values, suits} =
       Enum.reduce(cards, {[], []}, fn card, {values, suits} ->
-        {[card.value | values], [card.suit | suits]}
+        {[card["value"] | values], [card["suit"] | suits]}
       end)
 
     values = Enum.reverse(values)

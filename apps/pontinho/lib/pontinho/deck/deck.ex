@@ -36,7 +36,7 @@ defmodule Pontinho.Deck do
   end
 
   @spec next_card(map) :: map()
-  def next_card(%{value: value, suit: suit}) do
+  def next_card(%{"value" => value, "suit" => suit}) do
     last_index = Enum.count(@values) - 1
 
     next_index =
@@ -46,7 +46,7 @@ defmodule Pontinho.Deck do
       end
 
     next_value = Enum.at(@values, next_index)
-    %{value: next_value, suit: suit}
+    %{"value" => next_value, "suit" => suit}
   end
 
   @spec replace_card(list(map), map, map) :: list(map)
