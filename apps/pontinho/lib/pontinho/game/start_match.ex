@@ -31,8 +31,10 @@ defmodule Pontinho.StartMatch do
       nil ->
         first_player
 
-      %Player{sequence: sequence} ->
-        Enum.find(players, first_player, &(&1.sequence == sequence + 1))
+      %Player{} = last_croupier ->
+        players
+        |> sort_players(last_croupier)
+        |> next_croupier()
     end
   end
 
@@ -50,8 +52,19 @@ defmodule Pontinho.StartMatch do
     Repo.one(query)
   end
 
+  defp sort_players(players, reference) do
+    {players_before, ref_and_players_after} = Enum.split_while(players, &(&1.id != reference.id))
+
+    [_reference | players_after] = ref_and_players_after
+    players_after ++ players_before ++ [reference]
+  end
+
+  defp next_croupier([first_player | tail_players]) do
+    if first_player.playing, do: first_player, else: next_croupier(tail_players)
+  end
+
   defp match_changeset(game, stock, pre_joker, joker, croupier, players) do
-    %{match_players: match_players, stock: stock} = build_match_players(players, stock)
+    %{match_players: match_players, stock: stock} = build_match_players(players, croupier, stock)
 
     match_attributes = %{
       match_players: match_players,
@@ -69,8 +82,13 @@ defmodule Pontinho.StartMatch do
     |> validate_length(:match_players, min: 2, max: 9)
   end
 
-  defp build_match_players(players, stock) do
-    players_rounds = List.flatten([players, players, players])
+  defp build_match_players(players, croupier, stock) do
+    playing_players =
+      players
+      |> Enum.filter(& &1.playing)
+      |> sort_players(croupier)
+
+    players_rounds = playing_players ++ playing_players ++ playing_players
 
     %{match_players: match_players, stock: stock} =
       Enum.reduce(players_rounds, %{match_players: %{}, stock: stock}, fn player, acc ->

@@ -38,6 +38,24 @@ defmodule Pontinho.StartMatchTest do
     assert Enum.all?(match.match_players, fn match_player -> length(match_player.hand) == 9 end)
   end
 
+  test "skips not playing players" do
+    game = insert(:game)
+    first_player = insert(:player, game: game, playing: true, sequence: 1)
+    insert(:player, game: game, playing: false, sequence: 2)
+    third_player = insert(:player, game: game, playing: true, sequence: 3)
+    insert(:match, game: game, croupier: first_player)
+
+    assert {:ok, %Match{} = match} = StartMatch.run(game)
+    assert match.croupier.id == third_player.id
+    assert match.game == game
+    assert length(match.stock) == 104 - 2 * 9 - 1
+    assert match.discard_pile == []
+    refute is_nil(match.pre_joker)
+    assert match.joker == Deck.next_card(match.pre_joker)
+    assert length(match.match_players) == 2
+    assert Enum.all?(match.match_players, fn match_player -> length(match_player.hand) == 9 end)
+  end
+
   test "returns error when there is 1 player" do
     game = insert(:game)
     insert(:player, game: game)
