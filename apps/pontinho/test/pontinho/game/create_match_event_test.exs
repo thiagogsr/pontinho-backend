@@ -501,6 +501,34 @@ defmodule Pontinho.CreateMatchEventTest do
       assert length(match_player_hand) == length(match_player.hand) + 1
     end
 
+    test "moves discard pile to stock when there is no stock after buy" do
+      stock_card = %{"value" => "7", "suit" => "clubs"}
+
+      discard_pile = [
+        %{"value" => "3", "suit" => "diamonds"},
+        %{"value" => "A", "suit" => "clubs"},
+        %{"value" => "K", "suit" => "spades"}
+      ]
+
+      match = insert(:match, stock: [stock_card], discard_pile: discard_pile)
+
+      match_player = insert(:match_player)
+      insert(:match_event, match: match, type: "DISCARD")
+
+      assert {:ok, %MatchEvent{} = match_event} =
+               CreateMatchEvent.run(match, match_player, nil, "BUY", [])
+
+      assert match_event.type == "BUY"
+
+      assert %Match{stock: new_stock, discard_pile: new_discard_pile} = Repo.get(Match, match.id)
+      assert new_stock -- discard_pile == []
+      assert new_discard_pile == []
+
+      %MatchPlayer{hand: match_player_hand} = Repo.get(MatchPlayer, match_player.id)
+      assert hd(match_player_hand) == stock_card
+      assert length(match_player_hand) == length(match_player.hand) + 1
+    end
+
     test "returns error when previous event was DISCARD for the same match player" do
       match = insert(:match)
       match_player = insert(:match_player)

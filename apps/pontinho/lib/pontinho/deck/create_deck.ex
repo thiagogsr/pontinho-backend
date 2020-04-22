@@ -3,9 +3,7 @@ defmodule Pontinho.CreateDeck do
   Create the deck necessary for the game
   """
 
-  alias Pontinho.Deck
-
-  @shuffle_times Application.get_env(:pontinho, :deck_shuffle_times)
+  alias Pontinho.{Deck, ShuffleCards}
 
   @spec run() :: list(map)
   def run do
@@ -16,14 +14,6 @@ defmodule Pontinho.CreateDeck do
       end)
     end)
     |> List.flatten()
-    |> shuffle(@shuffle_times)
-  end
-
-  defp shuffle(list, times) when times == 0, do: list
-
-  defp shuffle(list, times) do
-    list
-    |> Enum.shuffle()
-    |> shuffle(times - 1)
+    |> ShuffleCards.run()
   end
 end
