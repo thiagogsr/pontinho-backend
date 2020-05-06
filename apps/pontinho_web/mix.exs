@@ -42,7 +42,8 @@ defmodule PontinhoWeb.MixProject do
       {:phoenix_ecto, "~> 4.0"},
       {:pontinho, in_umbrella: true},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"}
+      {:plug_cowboy, "~> 2.0"},
+      {:cors_plug, "~> 2.0"}
     ]
   end
 
