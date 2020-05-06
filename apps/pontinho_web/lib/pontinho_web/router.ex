@@ -5,7 +5,9 @@ defmodule PontinhoWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", PontinhoWeb do
+  scope "/api/v1", PontinhoWeb do
     pipe_through :api
+
+    post("/games", GameController, :create)
   end
 end

@@ -1,9 +1,8 @@
 defmodule Pontinho do
   @moduledoc """
-  Pontinho keeps the contexts that define your domain
-  and business logic.
-
-  Contexts are also responsible for managing your data, regardless
-  if it comes from the database, an external API or others.
+  Pontinho API
   """
+
+  defdelegate create_game(betting_table), to: Pontinho.CreateGame, as: :run
+  defdelegate join_game(game, player_name), to: Pontinho.JoinGame, as: :run
 end
