@@ -10,7 +10,14 @@ defmodule Pontinho.CreateGameTest do
     assert game.betting_table == betting_table
   end
 
-  test "returns a changeset error" do
+  test "returns a changeset error for an invalid betting table" do
+    betting_table = [50, nil, nil, nil, 800]
+
+    assert {:error, %Ecto.Changeset{} = changeset} = CreateGame.run(betting_table)
+    assert %{betting_table: ["should be a list of integer"]} = errors_on(changeset)
+  end
+
+  test "returns a changeset error for a betting table with less than 5 items" do
     betting_table = [50, 100, 200]
 
     assert {:error, %Ecto.Changeset{} = changeset} = CreateGame.run(betting_table)
