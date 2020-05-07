@@ -16,6 +16,7 @@ defmodule Pontinho.MatchPlayer do
     field :discard_pile_card, :map
     field :ask_beat, :boolean
     field :false_beat, :boolean
+    field :points_before, :integer
     field :points, :integer
     field :broke, :boolean
     belongs_to :match, Match
