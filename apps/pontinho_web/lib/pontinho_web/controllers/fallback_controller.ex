@@ -17,6 +17,6 @@ defmodule PontinhoWeb.FallbackController do
   def call(conn, {:error, message}) when is_binary(message) do
     conn
     |> put_status(:unprocessable_entity)
-    |> json(%{error: message})
+    |> json(%{errors: [message]})
   end
 end

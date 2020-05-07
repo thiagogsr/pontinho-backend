@@ -28,6 +28,6 @@ defmodule PontinhoWeb.ChangesetView do
   end
 
   defp serializer_detail({field, detail}) do
-    Enum.map(detail, fn title -> %{field => title} end)
+    Enum.map(detail, fn title -> "#{field} #{title}" end)
   end
 end

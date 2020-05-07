@@ -28,7 +28,7 @@ defmodule PontinhoWeb.JoinGameControllerTest do
           "name" => ""
         })
 
-      assert %{"errors" => [%{"name" => "can't be blank"}]} = json_response(conn, 422)
+      assert %{"errors" => ["name can't be blank"]} = json_response(conn, 422)
     end
 
     test "returns 400 when game is already started", %{conn: conn} do
@@ -40,7 +40,7 @@ defmodule PontinhoWeb.JoinGameControllerTest do
           "name" => "Player name"
         })
 
-      assert %{"error" => "game already started"} = json_response(conn, 422)
+      assert %{"errors" => ["game already started"]} = json_response(conn, 422)
     end
   end
 end

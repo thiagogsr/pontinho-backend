@@ -24,7 +24,7 @@ defmodule PontinhoWeb.GameControllerTest do
           "name" => "Player 1"
         })
 
-      assert %{"errors" => [%{"betting_table" => "should have at least 5 item(s)"}]} =
+      assert %{"errors" => ["betting_table should have at least 5 item(s)"]} =
                json_response(conn, 422)
     end
 
@@ -35,7 +35,7 @@ defmodule PontinhoWeb.GameControllerTest do
           "name" => ""
         })
 
-      assert %{"errors" => [%{"name" => "can't be blank"}]} = json_response(conn, 422)
+      assert %{"errors" => ["name can't be blank"]} = json_response(conn, 422)
     end
   end
 end
