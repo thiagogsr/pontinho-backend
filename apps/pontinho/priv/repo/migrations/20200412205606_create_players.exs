@@ -16,7 +16,7 @@ defmodule Pontinho.Repo.Migrations.CreatePlayers do
     end
 
     create index(:players, [:game_id])
-    create unique_index(:players, [:game_id, :name])
+    create unique_index(:players, [:name, :game_id])
 
     alter table(:games) do
       add :winner_id, references(:players, on_delete: :nothing, type: :binary_id)

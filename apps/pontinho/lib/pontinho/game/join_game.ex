@@ -37,6 +37,7 @@ defmodule Pontinho.JoinGame do
     |> change()
     |> put_change(:name, player_name)
     |> validate_required([:name])
+    |> unique_constraint([:name, :game_id])
     |> put_change(:sequence, sequence)
     |> put_change(:broke_times, 0)
     |> put_change(:points, @default_points)
