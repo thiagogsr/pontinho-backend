@@ -3,7 +3,7 @@ defmodule Pontinho.JoinGame do
   Joining in a game
   """
 
-  alias Pontinho.{Game, Player, Repo}
+  alias Pontinho.{Game, Match, Player, Repo}
 
   import Ecto.Changeset
   import Ecto.Query, only: [from: 2]
@@ -13,25 +13,26 @@ defmodule Pontinho.JoinGame do
   @spec run(%Game{}, String.t()) :: {:ok, %Player{}} | {:error, %Ecto.Changeset{}}
   def run(game, player_name) do
     Repo.transaction(fn repo ->
-      sequence = fetch_sequence(repo, game)
-
-      case insert_player(repo, game, player_name, sequence) do
-        {:ok, player} -> player
-        {:error, changeset} -> Repo.rollback(changeset)
+      if game_already_started?(game) do
+        Repo.rollback("game already started")
+      else
+        case insert_player(repo, game, player_name) do
+          {:ok, player} -> player
+          {:error, changeset} -> Repo.rollback(changeset)
+        end
       end
     end)
   end
 
-  defp fetch_sequence(repo, %{id: game_id} = _game) do
-    query = from(p in Player, where: p.game_id == ^game_id, select: max(p.sequence), limit: 1)
-
-    case repo.one(query) do
-      nil -> 0
-      sequence -> sequence + 1
-    end
+  defp game_already_started?(%{id: game_id}) do
+    from(m in Match, where: m.game_id == ^game_id)
+    |> Repo.aggregate(:count, :id)
+    |> Kernel.>(0)
   end
 
-  defp insert_player(repo, game, player_name, sequence) do
+  defp insert_player(repo, game, player_name) do
+    sequence = next_sequence(repo, game)
+
     %Player{}
     |> change()
     |> put_change(:name, player_name)
@@ -42,5 +43,14 @@ defmodule Pontinho.JoinGame do
     |> put_change(:playing, true)
     |> put_assoc(:game, game)
     |> repo.insert()
+  end
+
+  defp next_sequence(repo, %{id: game_id} = _game) do
+    query = from(p in Player, where: p.game_id == ^game_id, select: max(p.sequence), limit: 1)
+
+    case repo.one(query) do
+      nil -> 0
+      sequence -> sequence + 1
+    end
   end
 end

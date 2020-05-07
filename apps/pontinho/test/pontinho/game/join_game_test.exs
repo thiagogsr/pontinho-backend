@@ -30,4 +30,11 @@ defmodule Pontinho.JoinGameTest do
     assert {:error, %Ecto.Changeset{} = changeset} = JoinGame.run(game, "")
     assert %{name: ["can't be blank"]} = errors_on(changeset)
   end
+
+  test "returns error when game is already started" do
+    game = insert(:game)
+    insert(:match, game: game)
+
+    assert {:error, "game already started"} = JoinGame.run(game, "Player name")
+  end
 end

@@ -13,4 +13,10 @@ defmodule PontinhoWeb.FallbackController do
     |> put_view(ChangesetView)
     |> render("error.json", %{changeset: changeset})
   end
+
+  def call(conn, {:error, message}) when is_binary(message) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> json(%{error: message})
+  end
 end
