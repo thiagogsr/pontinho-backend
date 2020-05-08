@@ -10,7 +10,7 @@ defmodule PontinhoWeb.Endpoint do
     signing_salt: "qfGVZ+SV"
   ]
 
-  socket "/socket", PontinhoWeb.UserSocket,
+  socket "/socket", PontinhoWeb.PlayerSocket,
     websocket: true,
     longpoll: false
 

@@ -8,4 +8,5 @@ defmodule Pontinho do
   defdelegate get_game!(game_id), to: Pontinho.GameRepo
   defdelegate list_players(game), to: Pontinho.GameRepo
   defdelegate list_game_matches(game), to: Pontinho.GameMatches, as: :list
+  defdelegate get_player(player_id), to: Pontinho.PlayerRepo
 end
