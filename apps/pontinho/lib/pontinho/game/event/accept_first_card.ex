@@ -9,18 +9,16 @@ defmodule Pontinho.Event.AcceptFirstCard do
 
   def validate(_match, match_player, _match_collection, _cards, previous_event) do
     if previous_event.type == "BUY_FIRST_CARD" &&
-         previous_event.match_player_id == match_player.id &&
-         is_map(match_player.first_card) do
+         previous_event.match_player_id == match_player.id do
       []
     else
       ["invalid operation"]
     end
   end
 
-  def run(_match, match_player, _match_collection, _cards) do
+  def run(_match, match_player, _match_collection, _cards, previous_event) do
     UpdateMatchPlayer.run(match_player, %{
-      first_card: nil,
-      hand: [match_player.first_card | match_player.hand]
+      hand: [previous_event.taked_card | match_player.hand]
     })
   end
 end

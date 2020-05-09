@@ -53,9 +53,9 @@ defmodule Pontinho.HandleEvent do
     ])
   end
 
-  @spec run(String.t(), %Match{}, %MatchPlayer{}, %MatchCollection{}, list(map)) ::
-          {:ok, any} | {:error, %Ecto.Changeset{}}
-  def run(type, match, match_player, match_collection, cards) do
-    apply(@mapping[type], :run, [match, match_player, match_collection, cards])
+  @spec run(String.t(), %Match{}, %MatchPlayer{}, %MatchCollection{}, list(map), %MatchEvent{}) ::
+          {:cast, atom(), any()} | any()
+  def run(type, match, match_player, match_collection, cards, previous_event) do
+    apply(@mapping[type], :run, [match, match_player, match_collection, cards, previous_event])
   end
 end

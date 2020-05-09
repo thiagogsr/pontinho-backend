@@ -37,7 +37,9 @@ defmodule Pontinho.CreateMatchEvent do
     |> put_assoc(:match_player, match_player)
     |> put_assoc(:match_collection, match_collection)
     |> validate_match_event(match, match_player, match_collection, previous_event)
-    |> prepare_changes(&prepare_side_effetcts(&1, match, match_player, match_collection))
+    |> prepare_changes(
+      &prepare_side_effetcts(&1, match, match_player, match_collection, previous_event)
+    )
   end
 
   defp validate_match_event(
@@ -62,13 +64,23 @@ defmodule Pontinho.CreateMatchEvent do
          %Ecto.Changeset{valid?: true} = changeset,
          match,
          match_player,
-         match_collection
+         match_collection,
+         previous_event
        ) do
     %{type: type, cards: cards} = changeset.changes
 
-    HandleEvent.run(type, match, match_player, match_collection, cards)
-    changeset
+    case HandleEvent.run(type, match, match_player, match_collection, cards, previous_event) do
+      {:cast, field, value} -> put_change(changeset, field, value)
+      _ -> changeset
+    end
   end
 
-  defp prepare_side_effetcts(changeset, _match, _match_player, _match_collection), do: changeset
+  defp prepare_side_effetcts(
+         changeset,
+         _match,
+         _match_player,
+         _match_collection,
+         _previous_event
+       ),
+       do: changeset
 end

@@ -7,5 +7,5 @@ defmodule Pontinho.Event do
 
   @callback validate(%Match{}, %MatchPlayer{}, %MatchCollection{}, list(map), %MatchEvent{}) ::
               list(String.t())
-  @callback run(%Match{}, %MatchPlayer{}, %MatchCollection{}, list(map)) :: any
+  @callback run(%Match{}, %MatchPlayer{}, %MatchCollection{}, list(map), %MatchEvent{}) :: any
 end

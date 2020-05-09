@@ -26,7 +26,7 @@ defmodule Pontinho.Event.AddCardToCollection do
     end
   end
 
-  def run(_match, match_player, match_collection, cards) do
+  def run(_match, match_player, match_collection, cards, _previous_event) do
     new_match_collection_cards = Deck.remove_cards(cards, match_collection.cards)
     match_player_cards = Deck.remove_cards(match_player.hand, new_match_collection_cards)
 

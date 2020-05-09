@@ -8,14 +8,14 @@ defmodule Pontinho.CreateMatchEventTest do
   describe "ACCEPT_FIRST_CARD" do
     test "returns ok when event is valid" do
       match = insert(:match)
+      match_player = insert(:match_player, hand: [])
 
-      match_player =
-        insert(:match_player,
-          hand: [],
-          first_card: %{"value" => "2", "suit" => "diamonds", "deck" => 1}
-        )
-
-      insert(:match_event, match: match, match_player: match_player, type: "BUY_FIRST_CARD")
+      insert(:match_event,
+        match: match,
+        match_player: match_player,
+        type: "BUY_FIRST_CARD",
+        taked_card: %{"value" => "2", "suit" => "diamonds", "deck" => 1}
+      )
 
       assert {:ok, %MatchEvent{} = match_event} =
                CreateMatchEvent.run(
@@ -29,20 +29,13 @@ defmodule Pontinho.CreateMatchEventTest do
       assert match_event.type == "ACCEPT_FIRST_CARD"
 
       assert %MatchPlayer{
-               first_card: nil,
                hand: [%{"value" => "2", "suit" => "diamonds", "deck" => 1}]
              } = Repo.get(MatchPlayer, match_player.id)
     end
 
     test "returns error when previous event was not BUY_FIRST_CARD" do
       match = insert(:match)
-
-      match_player =
-        insert(:match_player,
-          hand: [],
-          first_card: %{"value" => "2", "suit" => "diamonds", "deck" => 1}
-        )
-
+      match_player = insert(:match_player, hand: [])
       insert(:match_event, match: match, match_player: match_player, type: "BUY")
 
       assert {:error, %Ecto.Changeset{} = changeset} =
@@ -59,31 +52,13 @@ defmodule Pontinho.CreateMatchEventTest do
 
     test "returns error when the previous event was made by other match player" do
       match = insert(:match)
+      match_player = insert(:match_player, hand: [])
 
-      match_player =
-        insert(:match_player,
-          hand: [],
-          first_card: %{"value" => "2", "suit" => "diamonds", "deck" => 1}
-        )
-
-      insert(:match_event, match: match, type: "BUY_FIRST_CARD")
-
-      assert {:error, %Ecto.Changeset{} = changeset} =
-               CreateMatchEvent.run(
-                 match,
-                 match_player,
-                 nil,
-                 "ACCEPT_FIRST_CARD",
-                 []
-               )
-
-      assert %{cards: ["invalid operation"]} = errors_on(changeset)
-    end
-
-    test "returns error when match player has no first card" do
-      match = insert(:match)
-      match_player = insert(:match_player, hand: [], first_card: nil)
-      insert(:match_event, match: match, match_player: match_player, type: "BUY_FIRST_CARD")
+      insert(:match_event,
+        match: match,
+        type: "BUY_FIRST_CARD",
+        taked_card: %{"value" => "2", "suit" => "diamonds", "deck" => 1}
+      )
 
       assert {:error, %Ecto.Changeset{} = changeset} =
                CreateMatchEvent.run(
@@ -406,7 +381,6 @@ defmodule Pontinho.CreateMatchEventTest do
                CreateMatchEvent.run(match, match_player, nil, "ASK_BEAT", [])
 
       assert match_event.type == "ASK_BEAT"
-      assert %{ask_beat: true} = Repo.get(MatchPlayer, match_player.id)
     end
 
     test "returns error when match player false bet before" do
@@ -467,8 +441,7 @@ defmodule Pontinho.CreateMatchEventTest do
                CreateMatchEvent.run(match, match_player, nil, "BUY_FIRST_CARD", [])
 
       assert match_event.type == "BUY_FIRST_CARD"
-      assert %MatchPlayer{first_card: first_card} = Repo.get(MatchPlayer, match_player.id)
-      assert first_card == hd(match.stock)
+      assert match_event.taked_card == hd(match.stock)
     end
 
     test "returns error when previous event is not nil" do
@@ -686,14 +659,18 @@ defmodule Pontinho.CreateMatchEventTest do
 
       match_player =
         insert(:match_player,
-          discard_pile_card: %{"value" => "3", "suit" => "clubs", "deck" => 1},
           hand: [
             %{"value" => "2", "suit" => "clubs", "deck" => 1},
             %{"value" => "4", "suit" => "clubs", "deck" => 1}
           ]
         )
 
-      insert(:match_event, match: match, match_player: match_player, type: "TAKE_DISCARD_PILE")
+      insert(:match_event,
+        match: match,
+        match_player: match_player,
+        type: "TAKE_DISCARD_PILE",
+        taked_card: %{"value" => "3", "suit" => "clubs", "deck" => 1}
+      )
 
       assert {:ok, %MatchEvent{} = match_event} =
                CreateMatchEvent.run(match, match_player, nil, "DROP_COLLECTION", [
@@ -703,9 +680,7 @@ defmodule Pontinho.CreateMatchEventTest do
                ])
 
       assert match_event.type == "DROP_COLLECTION"
-
-      assert %MatchPlayer{hand: [], discard_pile_card: nil} =
-               Repo.get(MatchPlayer, match_player.id)
+      assert %MatchPlayer{hand: []} = Repo.get(MatchPlayer, match_player.id)
     end
 
     test "returns ok when previous event type and collection are valid" do
@@ -765,7 +740,6 @@ defmodule Pontinho.CreateMatchEventTest do
 
       match_player =
         insert(:match_player,
-          discard_pile_card: %{"value" => "3", "suit" => "clubs", "deck" => 1},
           hand: [
             %{"value" => "4", "suit" => "clubs", "deck" => 1},
             %{"value" => "5", "suit" => "clubs", "deck" => 1},
@@ -773,7 +747,12 @@ defmodule Pontinho.CreateMatchEventTest do
           ]
         )
 
-      insert(:match_event, match: match, match_player: match_player, type: "TAKE_DISCARD_PILE")
+      insert(:match_event,
+        match: match,
+        match_player: match_player,
+        type: "TAKE_DISCARD_PILE",
+        taked_card: %{"value" => "3", "suit" => "clubs", "deck" => 1}
+      )
 
       assert {:error, %Ecto.Changeset{} = changeset} =
                CreateMatchEvent.run(match, match_player, nil, "DROP_COLLECTION", [
@@ -886,7 +865,7 @@ defmodule Pontinho.CreateMatchEventTest do
   describe "FALSE_BEAT" do
     test "returns ok when match player asked to beat" do
       match = insert(:match)
-      match_player = insert(:match_player, ask_beat: true, false_beat: false)
+      match_player = insert(:match_player, false_beat: false)
       insert(:match_event, match: match, match_player: match_player, type: "ASK_BEAT")
 
       assert {:ok, %MatchEvent{} = match_event} =
@@ -894,13 +873,12 @@ defmodule Pontinho.CreateMatchEventTest do
 
       assert match_event.type == "FALSE_BEAT"
 
-      assert %MatchPlayer{ask_beat: false, false_beat: true} =
-               Repo.get(MatchPlayer, match_player.id)
+      assert %MatchPlayer{false_beat: true} = Repo.get(MatchPlayer, match_player.id)
     end
 
     test "returns error when match player did not ask to beat" do
       match = insert(:match)
-      match_player = insert(:match_player, ask_beat: false, false_beat: false)
+      match_player = insert(:match_player, false_beat: false)
       insert(:match_event, match: match, match_player: match_player, type: "DISCARD")
 
       assert {:error, %Ecto.Changeset{} = changeset} =
@@ -913,32 +891,27 @@ defmodule Pontinho.CreateMatchEventTest do
   describe "REJECT_FIRST_CARD" do
     test "returns ok when match player bought the first card" do
       match = insert(:match)
+      match_player = insert(:match_player)
 
-      match_player =
-        insert(:match_player, first_card: %{"value" => "2", "suit" => "clubs", "deck" => 1})
-
-      insert(:match_event, match: match, match_player: match_player, type: "BUY_FIRST_CARD")
+      insert(:match_event,
+        match: match,
+        match_player: match_player,
+        type: "BUY_FIRST_CARD",
+        taked_card: %{"value" => "2", "suit" => "clubs", "deck" => 1}
+      )
 
       assert {:ok, %MatchEvent{} = match_event} =
                CreateMatchEvent.run(match, match_player, nil, "REJECT_FIRST_CARD", [])
 
       assert match_event.type == "REJECT_FIRST_CARD"
 
-      assert %MatchPlayer{first_card: nil} = Repo.get(MatchPlayer, match_player.id)
-
-      assert %{"value" => "2", "suit" => "clubs", "deck" => 1} =
-               Repo.get(Match, match.id).discard_pile |> hd()
+      assert %{discard_pile: [%{"value" => "2", "suit" => "clubs", "deck" => 1} | _]} =
+               Repo.get(Match, match.id)
     end
 
     test "returns error when previous event was not BUY_FIRST_CARD" do
       match = insert(:match)
-
-      match_player =
-        insert(:match_player,
-          hand: [],
-          first_card: %{"value" => "2", "suit" => "diamonds", "deck" => 1}
-        )
-
+      match_player = insert(:match_player, hand: [])
       insert(:match_event, match: match, match_player: match_player, type: "BUY")
 
       assert {:error, %Ecto.Changeset{} = changeset} =
@@ -955,31 +928,13 @@ defmodule Pontinho.CreateMatchEventTest do
 
     test "returns error when the previous event was made by other match player" do
       match = insert(:match)
+      match_player = insert(:match_player, hand: [])
 
-      match_player =
-        insert(:match_player,
-          hand: [],
-          first_card: %{"value" => "2", "suit" => "diamonds", "deck" => 1}
-        )
-
-      insert(:match_event, match: match, type: "BUY_FIRST_CARD")
-
-      assert {:error, %Ecto.Changeset{} = changeset} =
-               CreateMatchEvent.run(
-                 match,
-                 match_player,
-                 nil,
-                 "REJECT_FIRST_CARD",
-                 []
-               )
-
-      assert %{cards: ["invalid operation"]} = errors_on(changeset)
-    end
-
-    test "returns error when match player has no first card" do
-      match = insert(:match)
-      match_player = insert(:match_player, hand: [], first_card: nil)
-      insert(:match_event, match: match, match_player: match_player, type: "BUY_FIRST_CARD")
+      insert(:match_event,
+        match: match,
+        type: "BUY_FIRST_CARD",
+        taked_card: %{"value" => "2", "suit" => "diamonds", "deck" => 1}
+      )
 
       assert {:error, %Ecto.Changeset{} = changeset} =
                CreateMatchEvent.run(
@@ -1111,10 +1066,7 @@ defmodule Pontinho.CreateMatchEventTest do
                CreateMatchEvent.run(match, match_player, nil, "TAKE_DISCARD_PILE", [])
 
       assert match_event.type == "TAKE_DISCARD_PILE"
-
-      assert %MatchPlayer{
-               discard_pile_card: %{"value" => "A", "suit" => "diamonds", "deck" => 1}
-             } = Repo.get(MatchPlayer, match_player.id)
+      assert match_event.taked_card == %{"value" => "A", "suit" => "diamonds", "deck" => 1}
 
       assert %Match{discard_pile: [%{"value" => "2", "suit" => "clubs", "deck" => 1}]} =
                Repo.get(Match, match.id)
@@ -1136,10 +1088,7 @@ defmodule Pontinho.CreateMatchEventTest do
                CreateMatchEvent.run(match, match_player, nil, "TAKE_DISCARD_PILE", [])
 
       assert match_event.type == "TAKE_DISCARD_PILE"
-
-      assert %MatchPlayer{
-               discard_pile_card: %{"value" => "A", "suit" => "diamonds", "deck" => 1}
-             } = Repo.get(MatchPlayer, match_player.id)
+      assert match_event.taked_card == %{"value" => "A", "suit" => "diamonds", "deck" => 1}
 
       assert %Match{discard_pile: [%{"value" => "2", "suit" => "clubs", "deck" => 1}]} =
                Repo.get(Match, match.id)

@@ -5,17 +5,14 @@ defmodule Pontinho.Event.AskBeat do
 
   @behaviour Pontinho.Event
 
-  alias Pontinho.UpdateMatchPlayer
-
   def validate(_match, match_player, _match_collection, _cards, _previous_event) do
-    if match_player.ask_beat || match_player.false_beat do
+    if match_player.false_beat do
       ["invalid operation"]
     else
       []
     end
   end
 
-  def run(_match, match_player, _match_collection, _cards) do
-    UpdateMatchPlayer.run(match_player, %{ask_beat: true})
+  def run(_match, _match_player, _match_collection, _cards, _previous_event) do
   end
 end

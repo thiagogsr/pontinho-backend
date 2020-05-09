@@ -24,7 +24,7 @@ defmodule Pontinho.Event.Buy do
     end
   end
 
-  def run(match, match_player, _match_collection, _cards) do
+  def run(match, match_player, _match_collection, _cards, _previous_event) do
     {card, stock} = Deck.buy(match.stock)
 
     case length(stock) do

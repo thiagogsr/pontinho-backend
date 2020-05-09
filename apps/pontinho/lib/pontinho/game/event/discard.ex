@@ -24,7 +24,7 @@ defmodule Pontinho.Event.Discard do
     end
   end
 
-  def run(match, match_player, _match_collection, cards) do
+  def run(match, match_player, _match_collection, cards, _previous_event) do
     [card] = cards
     match_player_cards = Deck.remove_cards(match_player.hand, [card])
 

@@ -13,6 +13,7 @@ defmodule Pontinho.MatchEvent do
   schema "match_events" do
     field :cards, {:array, :map}
     field :type, :string
+    field :taked_card, :map
     belongs_to :match, Match
     belongs_to :match_player, MatchPlayer
     belongs_to :match_collection, MatchCollection

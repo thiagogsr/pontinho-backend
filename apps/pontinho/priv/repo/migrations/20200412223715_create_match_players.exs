@@ -5,9 +5,6 @@ defmodule Pontinho.Repo.Migrations.CreateMatchPlayers do
     create table(:match_players, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :hand, {:array, :map}, null: false
-      add :first_card, :map
-      add :discard_pile_card, :map
-      add :ask_beat, :boolean
       add :false_beat, :boolean
       add :points_before, :integer
       add :points, :integer

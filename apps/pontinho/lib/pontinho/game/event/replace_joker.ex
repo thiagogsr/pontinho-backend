@@ -23,7 +23,7 @@ defmodule Pontinho.Event.ReplaceJoker do
     end
   end
 
-  def run(match, match_player, match_collection, cards) do
+  def run(match, match_player, match_collection, cards, _previous_event) do
     [card | _tail] = cards
     match_player_cards = [match.joker | Deck.remove_cards(match_player.hand, cards)]
     match_collection_cards = Deck.replace_card(match_collection.cards, match.joker, card)

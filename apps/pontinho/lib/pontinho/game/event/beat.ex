@@ -13,7 +13,6 @@ defmodule Pontinho.Event.Beat do
     end
   end
 
-  def run(_match, _match_player, _match_collection, _cards) do
-    # TODO
+  def run(_match, _match_player, _match_collection, _cards, _previous_event) do
   end
 end

@@ -75,6 +75,7 @@ defmodule Pontinho.StartMatch do
     }
 
     %Match{}
+    |> Repo.preload(:match_collections)
     |> cast(match_attributes, [:stock, :discard_pile, :pre_joker, :joker])
     |> put_assoc(:game, game)
     |> put_assoc(:croupier, croupier)
@@ -108,7 +109,6 @@ defmodule Pontinho.StartMatch do
     match_player
     |> cast(attributes, [:hand])
     |> put_change(:points_before, player.points)
-    |> put_change(:ask_beat, false)
     |> put_change(:false_beat, false)
     |> put_assoc(:player, player)
   end
