@@ -5,7 +5,16 @@ defmodule PontinhoWeb.GameView do
     %{
       game_id: game.id,
       betting_table: game.betting_table,
-      player: player_json(player),
+      player_id: player.id,
+      players: Enum.map(players, &player_json/1),
+      matches: Enum.map(matches, &match_json/1)
+    }
+  end
+
+  def render("game.json", %{game: game, players: players, matches: matches}) do
+    %{
+      game_id: game.id,
+      betting_table: game.betting_table,
       players: Enum.map(players, &player_json/1),
       matches: Enum.map(matches, &match_json/1)
     }

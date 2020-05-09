@@ -8,7 +8,7 @@ defmodule PontinhoWeb.Router do
   scope "/api/v1", PontinhoWeb do
     pipe_through :api
 
-    resources("/games", GameController, only: [:create]) do
+    resources("/games", GameController, only: [:create, :show]) do
       post("/join", JoinGameController, :create)
     end
   end

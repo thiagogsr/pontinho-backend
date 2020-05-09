@@ -24,7 +24,7 @@ defmodule PontinhoWeb.JoinGameControllerTest do
       assert %{
                "game_id" => ^game_id,
                "betting_table" => [50, 100, 200, 400, 800, 1600],
-               "player" => %{"id" => _, "name" => "New Player", "points" => 99},
+               "player_id" => _,
                "players" => [
                  %{"id" => _, "name" => "Player 1", "points" => 99},
                  %{"id" => _, "name" => "New Player", "points" => 99}
