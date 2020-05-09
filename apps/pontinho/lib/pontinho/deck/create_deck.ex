@@ -10,7 +10,10 @@ defmodule Pontinho.CreateDeck do
     Deck.values()
     |> Enum.flat_map(fn value ->
       Enum.flat_map(Deck.suits(), fn suit ->
-        [%{"value" => value, "suit" => suit}, %{"value" => value, "suit" => suit}]
+        [
+          %{"value" => value, "suit" => suit, "deck" => 1},
+          %{"value" => value, "suit" => suit, "deck" => 2}
+        ]
       end)
     end)
     |> ShuffleCards.run()
