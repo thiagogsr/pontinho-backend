@@ -5,7 +5,7 @@ defmodule Pontinho.ShuffleCardsTest do
 
   test "returns shuffled cards" do
     deck = CreateDeck.run()
-    cards = ShuffleCards.run(deck, 5)
+    cards = ShuffleCards.run(deck, 1)
 
     assert deck -- cards == []
     assert Enum.at(deck, 23) != Enum.at(cards, 23)
