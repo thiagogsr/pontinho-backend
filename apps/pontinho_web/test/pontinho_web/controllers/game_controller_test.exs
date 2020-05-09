@@ -4,7 +4,7 @@ defmodule PontinhoWeb.GameControllerTest do
   import Pontinho.Factory
 
   describe "POST create" do
-    test "returns 200 when params are valid", %{conn: conn} do
+    test "returns 201 when params are valid", %{conn: conn} do
       conn =
         post(conn, "/api/v1/games", %{
           "betting_table" => [50, 100, 200, 400, 800, 1600],
@@ -17,7 +17,7 @@ defmodule PontinhoWeb.GameControllerTest do
                "player_id" => _,
                "players" => [%{"id" => _, "name" => "Player 1", "points" => 99}],
                "matches" => []
-             } = json_response(conn, 200)
+             } = json_response(conn, 201)
     end
 
     test "returns 422 when betting player is missing", %{conn: conn} do

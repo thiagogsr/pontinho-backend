@@ -6,7 +6,9 @@ defmodule PontinhoWeb.GameController do
   def create(conn, params) do
     with {:ok, game} <- Pontinho.create_game(params["betting_table"]),
          {:ok, player} <- Pontinho.join_game(game, params["name"]) do
-      render(conn, "game.json", %{game: game, player: player, players: [player], matches: []})
+      conn
+      |> put_status(:created)
+      |> render("game.json", %{game: game, player: player, players: [player], matches: []})
     end
   end
 
