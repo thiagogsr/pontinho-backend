@@ -30,16 +30,24 @@ defmodule PontinhoWeb.GameView do
 
   defp match_json(match) do
     %{
+      id: match.id,
       croupier: match.croupier.name,
       match_players:
         Enum.map(match.match_players, fn match_player ->
           %{
+            id: match_player.id,
             name: match_player.player.name,
             points_before: match_player.points_before,
-            points: match_player.points,
-            points_after: match_player.points_before - match_player.points
+            points: cast_points(match_player.points),
+            points_after: calculate_match_points(match_player.points_before, match_player.points)
           }
         end)
     }
   end
+
+  defp cast_points(points) when is_nil(points), do: "-"
+  defp cast_points(points), do: points
+
+  defp calculate_match_points(_points_before, points) when is_nil(points), do: "-"
+  defp calculate_match_points(points_before, points), do: points_before - points
 end
