@@ -13,5 +13,6 @@ defmodule PontinhoWeb.Router do
     end
 
     post("/matches", MatchController, :create)
+    get("/matches/:match_id/:match_player_id", MatchController, :show)
   end
 end

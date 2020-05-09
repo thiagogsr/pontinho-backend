@@ -75,7 +75,6 @@ defmodule Pontinho.StartMatch do
     }
 
     %Match{}
-    |> Repo.preload(:match_collections)
     |> cast(match_attributes, [:stock, :discard_pile, :pre_joker, :joker])
     |> put_assoc(:game, game)
     |> put_assoc(:croupier, croupier)

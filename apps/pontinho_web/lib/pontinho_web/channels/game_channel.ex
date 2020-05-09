@@ -5,6 +5,8 @@ defmodule PontinhoWeb.GameChannel do
 
   use PontinhoWeb, :channel
 
+  alias PontinhoWeb.MatchPlayerSerializer
+
   intercept ["match_started"]
 
   def join("game:" <> game_id, _, %{assigns: %{player: player}} = socket) do
@@ -16,15 +18,15 @@ defmodule PontinhoWeb.GameChannel do
   end
 
   def handle_out("match_started", msg, %{assigns: %{player: player}} = socket) do
-    %{match_id: match_id} = msg
+    %{match: %{match_id: match_id}} = msg
 
     case Pontinho.find_match_player(match_id, player.id) do
       nil ->
         {:noreply, socket}
 
       match_player ->
-        new_attributes = %{match_player_id: match_player.id, match_player_hand: match_player.hand}
-        new_msg = Map.merge(msg, new_attributes)
+        serialized_match_player = MatchPlayerSerializer.serialize(match_player)
+        new_msg = Map.merge(msg, %{match_player: serialized_match_player})
         push(socket, "match_started", new_msg)
 
         {:noreply, socket}

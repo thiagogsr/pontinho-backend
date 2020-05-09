@@ -1,6 +1,6 @@
 defmodule PontinhoWeb.MatchSerializer do
   @moduledoc """
-  Serialize a match to broadcast via WebSocket
+  Match serialization
   """
 
   @spec serialize(map) :: map

@@ -6,6 +6,16 @@ defmodule PontinhoWeb.MatchControllerTest do
 
   alias PontinhoWeb.{GameChannel, PlayerSocket}
 
+  describe "GET show" do
+    test "returns 200 with the match and the match player", %{conn: conn} do
+      match = insert(:match)
+      match_player = insert(:match_player)
+
+      conn = get(conn, "/api/v1/matches/#{match.id}/#{match_player.id}")
+      assert %{"match" => _, "match_player" => _} = json_response(conn, 200)
+    end
+  end
+
   describe "POST create" do
     test "returns 201 when params are valid", %{conn: conn} do
       game = insert(:game)
@@ -21,14 +31,18 @@ defmodule PontinhoWeb.MatchControllerTest do
       assert %{"status" => "started"} = json_response(conn, 201)
 
       assert_push "match_started", %{
-        match_id: _,
-        match_player_id: _,
-        match_player_hand: _,
-        pre_joker: _,
-        no_stock: _,
-        head_discard_pile: _,
-        match_collections: _,
-        match_players: _
+        match: %{
+          match_id: _,
+          pre_joker: _,
+          no_stock: _,
+          head_discard_pile: _,
+          match_collections: _,
+          match_players: _
+        },
+        match_player: %{
+          match_player_id: _,
+          match_player_hand: _
+        }
       }
     end
 

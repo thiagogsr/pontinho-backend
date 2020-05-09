@@ -5,7 +5,7 @@ defmodule PontinhoWeb.MatchSerializerTest do
 
   alias PontinhoWeb.MatchSerializer
 
-  describe "serialize/2" do
+  describe "serialize/1" do
     test "returns a serialized match with stock" do
       match_players = build_list(5, :match_player)
       match_collections = build_list(2, :match_collection)
