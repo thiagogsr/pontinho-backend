@@ -16,15 +16,11 @@ defmodule PontinhoWeb.MatchControllerTest do
         |> socket("player", %{player: player})
         |> subscribe_and_join(GameChannel, "game:#{game.id}")
 
-      conn =
-        post(conn, "/api/v1/matches", %{
-          "game_id" => game.id,
-          "player_id" => player.id
-        })
+      conn = post(conn, "/api/v1/matches", %{"game_id" => game.id})
 
       assert %{"status" => "started"} = json_response(conn, 201)
 
-      assert_broadcast "match_started", %{
+      assert_push "match_started", %{
         match_id: _,
         match_player_id: _,
         match_player_hand: _,
@@ -38,13 +34,9 @@ defmodule PontinhoWeb.MatchControllerTest do
 
     test "returns 422 when there is one player", %{conn: conn} do
       game = insert(:game)
-      player = insert(:player, game: game)
+      insert(:player, game: game)
 
-      conn =
-        post(conn, "/api/v1/matches", %{
-          "game_id" => game.id,
-          "player_id" => player.id
-        })
+      conn = post(conn, "/api/v1/matches", %{"game_id" => game.id})
 
       assert %{"errors" => ["match_players should have at least 2 item(s)"]} =
                json_response(conn, 422)
@@ -52,13 +44,9 @@ defmodule PontinhoWeb.MatchControllerTest do
 
     test "returns 422 when there are more than 9 players", %{conn: conn} do
       game = insert(:game)
-      [player | _] = insert_list(10, :player, game: game)
+      insert_list(10, :player, game: game)
 
-      conn =
-        post(conn, "/api/v1/matches", %{
-          "game_id" => game.id,
-          "player_id" => player.id
-        })
+      conn = post(conn, "/api/v1/matches", %{"game_id" => game.id})
 
       assert %{"errors" => ["match_players should have at most 9 item(s)"]} =
                json_response(conn, 422)

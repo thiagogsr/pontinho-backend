@@ -24,7 +24,8 @@ defmodule PontinhoWeb.GameView do
     %{
       id: player.id,
       name: player.name,
-      points: player.points
+      points: player.points,
+      playing: player.playing
     }
   end
 

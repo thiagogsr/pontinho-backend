@@ -15,7 +15,9 @@ defmodule PontinhoWeb.GameControllerTest do
                "game_id" => _,
                "betting_table" => [50, 100, 200, 400, 800, 1600],
                "player_id" => _,
-               "players" => [%{"id" => _, "name" => "Player 1", "points" => 99}],
+               "players" => [
+                 %{"id" => _, "name" => "Player 1", "points" => 99, "playing" => true}
+               ],
                "matches" => []
              } = json_response(conn, 201)
     end

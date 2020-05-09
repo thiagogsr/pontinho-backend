@@ -3,12 +3,10 @@ defmodule PontinhoWeb.MatchSerializer do
   Serialize a match to broadcast via WebSocket
   """
 
-  @spec serialize(map, map) :: map
-  def serialize(match, match_player) do
+  @spec serialize(map) :: map
+  def serialize(match) do
     %{
       match_id: match.id,
-      match_player_id: match_player.id,
-      match_player_hand: match_player.hand,
       pre_joker: match.pre_joker,
       no_stock: match.stock |> Enum.empty?(),
       head_discard_pile: match.discard_pile |> List.first(),
