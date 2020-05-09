@@ -8,12 +8,11 @@ defmodule Pontinho.CreateDeck do
   @spec run() :: list(map)
   def run do
     Deck.values()
-    |> Enum.map(fn value ->
-      Enum.map(Deck.suits(), fn suit ->
+    |> Enum.flat_map(fn value ->
+      Enum.flat_map(Deck.suits(), fn suit ->
         [%{"value" => value, "suit" => suit}, %{"value" => value, "suit" => suit}]
       end)
     end)
-    |> List.flatten()
     |> ShuffleCards.run()
   end
 end

@@ -39,7 +39,8 @@ defmodule Pontinho.MixProject do
       {:ecto_sql, "~> 3.1"},
       {:postgrex, ">= 0.0.0"},
       {:jason, "~> 1.0"},
-      {:ex_machina, "~> 2.4"}
+      {:ex_machina, "~> 2.4"},
+      {:benchee, "~> 1.0", only: :dev}
     ]
   end
 
