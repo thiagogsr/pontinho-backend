@@ -8,12 +8,15 @@ defmodule PontinhoWeb.MatchSerializer do
     %{
       match_id: match.id,
       pre_joker: match.pre_joker,
-      no_stock: match.stock |> Enum.empty?(),
+      head_stock_deck: head_stock_deck(match.stock),
       head_discard_pile: match.discard_pile |> List.first(),
       match_collections: Enum.map(match.match_collections, &match_collection_json/1),
       match_players: Enum.map(match.match_players, &match_player_json/1)
     }
   end
+
+  defp head_stock_deck(stock) when stock == [], do: nil
+  defp head_stock_deck([head | _tail] = _stock), do: head["deck"]
 
   defp match_collection_json(match_collection) do
     %{

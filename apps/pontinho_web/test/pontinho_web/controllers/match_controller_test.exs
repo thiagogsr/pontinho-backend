@@ -34,7 +34,7 @@ defmodule PontinhoWeb.MatchControllerTest do
         match: %{
           match_id: _,
           pre_joker: _,
-          no_stock: _,
+          head_stock_deck: _,
           head_discard_pile: _,
           match_collections: _,
           match_players: _

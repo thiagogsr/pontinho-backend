@@ -22,7 +22,7 @@ defmodule PontinhoWeb.MatchSerializerTest do
       assert %{
                match_id: _,
                pre_joker: %{"suit" => "hearts", "value" => "10", "deck" => 1},
-               no_stock: false,
+               head_stock_deck: 2,
                head_discard_pile: %{"suit" => "suits", "value" => "J", "deck" => 2},
                match_collections: serialized_match_collections,
                match_players: serialized_match_players
@@ -51,7 +51,7 @@ defmodule PontinhoWeb.MatchSerializerTest do
       assert %{
                match_id: _,
                pre_joker: %{"suit" => "hearts", "value" => "10", "deck" => 1},
-               no_stock: true,
+               head_stock_deck: nil,
                head_discard_pile: %{"suit" => "suits", "value" => "J", "deck" => 2},
                match_collections: serialized_match_collections,
                match_players: serialized_match_players
