@@ -5,7 +5,7 @@ defmodule Pontinho.Match do
 
   use Ecto.Schema
 
-  alias Pontinho.{Game, MatchPlayer, Player}
+  alias Pontinho.{Game, MatchCollection, MatchPlayer, Player}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -19,6 +19,7 @@ defmodule Pontinho.Match do
     belongs_to :croupier, Player
     belongs_to :winner, MatchPlayer
     has_many :match_players, MatchPlayer
+    has_many :match_collections, MatchCollection
 
     timestamps()
   end

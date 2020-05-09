@@ -11,5 +11,7 @@ defmodule PontinhoWeb.Router do
     resources("/games", GameController, only: [:create, :show]) do
       post("/join", JoinGameController, :create)
     end
+
+    post("/matches", MatchController, :create)
   end
 end
