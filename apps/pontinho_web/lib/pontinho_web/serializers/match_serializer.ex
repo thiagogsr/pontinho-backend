@@ -4,14 +4,15 @@ defmodule PontinhoWeb.MatchSerializer do
   """
 
   @spec serialize(map) :: map
-  def serialize(match) do
+  def serialize(%{match: match, round_match_player: round_match_player}) do
     %{
       match_id: match.id,
       pre_joker: match.pre_joker,
       head_stock_deck: head_stock_deck(match.stock),
       head_discard_pile: match.discard_pile |> List.first(),
       match_collections: Enum.map(match.match_collections, &match_collection_json/1),
-      match_players: Enum.map(match.match_players, &match_player_json/1)
+      match_players: Enum.map(match.match_players, &match_player_json/1),
+      round_match_player_id: round_match_player.id
     }
   end
 
@@ -21,18 +22,19 @@ defmodule PontinhoWeb.MatchSerializer do
   defp match_collection_json(match_collection) do
     %{
       id: match_collection.id,
-      cards: match_collection.cards,
-      type: match_collection.type
+      type: match_collection.type,
+      cards: match_collection.cards
     }
   end
 
   defp match_player_json(match_player) do
     %{
-      id: match_player.id,
-      name: match_player.player.name,
-      points: match_player.player.points,
+      match_player_id: match_player.id,
+      player_name: match_player.player.name,
+      game_points: match_player.player.points,
       broke_times: match_player.player.broke_times,
-      cards: match_player.hand |> length()
+      number_of_cards: match_player.hand |> length(),
+      false_beat: match_player.false_beat
     }
   end
 end

@@ -8,7 +8,7 @@ defmodule PontinhoWeb.MatchController do
   def show(conn, params) do
     match =
       params["match_id"]
-      |> Pontinho.get_match!()
+      |> Pontinho.load_match()
       |> MatchSerializer.serialize()
 
     match_player =
@@ -23,8 +23,11 @@ defmodule PontinhoWeb.MatchController do
     game = Pontinho.get_game!(params["game_id"])
 
     with {:ok, %{id: match_id}} <- Pontinho.start_match(game) do
-      match = Pontinho.get_match!(match_id)
-      serialized_match = MatchSerializer.serialize(match)
+      serialized_match =
+        match_id
+        |> Pontinho.load_match()
+        |> MatchSerializer.serialize()
+
       Endpoint.broadcast("game:#{game.id}", "match_started", %{match: serialized_match})
 
       conn

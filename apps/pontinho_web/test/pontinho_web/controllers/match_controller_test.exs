@@ -8,8 +8,11 @@ defmodule PontinhoWeb.MatchControllerTest do
 
   describe "GET show" do
     test "returns 200 with the match and the match player", %{conn: conn} do
-      match = insert(:match)
-      match_player = insert(:match_player)
+      game = insert(:game)
+      player = insert(:player, game: game)
+      match = insert(:match, game: game, croupier: player)
+      match_player = insert(:match_player, match: match, player: player)
+      insert(:match_player, match: match)
 
       conn = get(conn, "/api/v1/matches/#{match.id}/#{match_player.id}")
       assert %{"match" => _, "match_player" => _} = json_response(conn, 200)
@@ -37,7 +40,8 @@ defmodule PontinhoWeb.MatchControllerTest do
           head_stock_deck: _,
           head_discard_pile: _,
           match_collections: _,
-          match_players: _
+          match_players: _,
+          round_match_player_id: _
         },
         match_player: %{
           match_player_id: _,
