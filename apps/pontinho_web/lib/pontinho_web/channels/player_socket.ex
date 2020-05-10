@@ -3,6 +3,7 @@ defmodule PontinhoWeb.PlayerSocket do
 
   ## Channels
   channel "game:*", PontinhoWeb.GameChannel
+  channel "match:*", PontinhoWeb.MatchChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a player. After
