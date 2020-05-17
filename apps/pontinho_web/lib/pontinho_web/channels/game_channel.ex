@@ -20,8 +20,8 @@ defmodule PontinhoWeb.GameChannel do
   def handle_out("match_started", msg, %{assigns: %{player: player}} = socket) do
     %{match: %{match_id: match_id}} = msg
 
-    case Pontinho.find_match_player(match_id, player.id) do
-      nil ->
+    case Pontinho.load_match_player(%{match_id: match_id, player_id: player.id}) do
+      %{match_player: nil} ->
         {:noreply, socket}
 
       match_player ->

@@ -11,6 +11,14 @@ defmodule Pontinho do
   defdelegate get_player(player_id), to: Pontinho.PlayerRepo
   defdelegate start_match(game), to: Pontinho.StartMatch, as: :run
   defdelegate load_match(match_id), to: Pontinho.LoadMatch, as: :run
-  defdelegate find_match_player(match_id, player_id), to: Pontinho.MatchPlayerRepo
+  defdelegate load_match_player(map), to: Pontinho.LoadMatchPlayer, as: :run
+  defdelegate load_match_player!(map), to: Pontinho.LoadMatchPlayer, as: :run!
+  defdelegate get_match!(match_id), to: Pontinho.MatchRepo
+  defdelegate find_match_player!(match_id, player_id), to: Pontinho.MatchPlayerRepo
   defdelegate get_match_player!(match_player_id), to: Pontinho.MatchPlayerRepo
+  defdelegate get_match_collection(match_collection_id), to: Pontinho.MatchCollectionRepo
+
+  defdelegate create_match_event(match, match_player, match_collection, type, cards),
+    to: Pontinho.CreateMatchEvent,
+    as: :run
 end

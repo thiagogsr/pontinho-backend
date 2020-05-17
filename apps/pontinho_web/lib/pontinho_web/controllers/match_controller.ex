@@ -12,8 +12,8 @@ defmodule PontinhoWeb.MatchController do
       |> MatchSerializer.serialize()
 
     match_player =
-      params["match_player_id"]
-      |> Pontinho.get_match_player!()
+      %{match_player_id: params["match_player_id"]}
+      |> Pontinho.load_match_player!()
       |> MatchPlayerSerializer.serialize()
 
     json(conn, %{match: match, match_player: match_player})

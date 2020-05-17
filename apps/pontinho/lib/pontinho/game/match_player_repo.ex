@@ -7,15 +7,15 @@ defmodule Pontinho.MatchPlayerRepo do
 
   alias Pontinho.{MatchPlayer, Repo}
 
-  @spec find_match_player(String.t(), String.t()) :: %MatchPlayer{} | nil
-  def find_match_player(match_id, player_id) do
+  @spec find_match_player!(String.t(), String.t()) :: %MatchPlayer{} | nil
+  def find_match_player!(match_id, player_id) do
     from(
       mp in MatchPlayer,
       where: mp.match_id == ^match_id,
       where: mp.player_id == ^player_id,
       limit: 1
     )
-    |> Repo.one()
+    |> Repo.one!()
   end
 
   @spec get_match_player!(String.t()) :: %MatchPlayer{}
