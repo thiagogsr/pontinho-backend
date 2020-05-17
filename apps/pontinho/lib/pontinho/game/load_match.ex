@@ -60,12 +60,12 @@ defmodule Pontinho.LoadMatch do
   end
 
   defp get_player_after(match_players, player_id) do
-    {_players_ids_before, [_player_id | players_ids_after]} =
+    {players_ids_before, [_player_id | players_ids_after]} =
       match_players
       |> Enum.map(& &1.player_id)
       |> Enum.split_while(&(&1 != player_id))
 
-    next_player_id = List.first(players_ids_after)
+    next_player_id = List.first(players_ids_after ++ players_ids_before)
     Enum.find(match_players, &(&1.player_id == next_player_id))
   end
 end
