@@ -3,6 +3,18 @@ defmodule Pontinho.LoadMatch do
   Load match current state
   """
 
+  @keep_match_player_event_types [
+    "ACCEPT_FIRST_CARD",
+    "ADD_CARD_TO_COLLECTION",
+    "ASK_BEAT",
+    "BUY_FIRST_CARD",
+    "BUY",
+    "DROP_COLLECTION",
+    "REJECT_FIRST_CARD",
+    "REPLACE_JOKER",
+    "TAKE_DISCARD_PILE"
+  ]
+
   import Ecto.Query, only: [from: 2]
 
   alias Pontinho.{Match, MatchCollection, MatchEvent, MatchPlayer, Repo}
@@ -55,8 +67,12 @@ defmodule Pontinho.LoadMatch do
     get_player_after(match.match_players, match.croupier_id)
   end
 
-  defp get_next_match_player(match, %{match_player: %{player_id: player_id}} = _last_event) do
-    get_player_after(match.match_players, player_id)
+  defp get_next_match_player(match, %{type: type, match_player: match_player} = _last_event) do
+    if type in @keep_match_player_event_types do
+      match_player
+    else
+      get_player_after(match.match_players, match_player.player_id)
+    end
   end
 
   defp get_player_after(match_players, player_id) do
