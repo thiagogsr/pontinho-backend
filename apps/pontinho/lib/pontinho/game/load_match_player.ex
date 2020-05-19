@@ -9,6 +9,7 @@ defmodule Pontinho.LoadMatchPlayer do
 
   @spec run(%{match_id: String.t(), player_id: String.t()}) :: %{
           match_player: %MatchPlayer{} | nil,
+          asked_beat: boolean,
           taked_card: map() | nil
         }
   def run(%{match_id: match_id, player_id: player_id}) do
@@ -20,6 +21,7 @@ defmodule Pontinho.LoadMatchPlayer do
 
   @spec run!(%{match_id: String.t(), player_id: String.t()}) :: %{
           match_player: %MatchPlayer{},
+          asked_beat: boolean,
           taked_card: map() | nil
         }
   def run!(%{match_id: match_id, player_id: player_id}) do
@@ -31,6 +33,7 @@ defmodule Pontinho.LoadMatchPlayer do
 
   @spec run!(%{match_player_id: String.t()}) :: %{
           match_player: %MatchPlayer{},
+          asked_beat: boolean,
           taked_card: map() | nil
         }
   def run!(%{match_player_id: match_player_id}) do
@@ -49,17 +52,21 @@ defmodule Pontinho.LoadMatchPlayer do
   end
 
   defp load_taked_card(match_player) when is_nil(match_player) do
-    %{match_player: match_player, taked_card: nil}
+    %{match_player: match_player, asked_beat: false, taked_card: nil}
   end
 
   defp load_taked_card(%{id: match_player_id} = match_player) do
     case load_last_match_event(match_player.match_id) do
       %MatchEvent{match_player_id: event_match_player_id} = match_event
       when event_match_player_id == match_player_id ->
-        %{match_player: match_player, taked_card: match_event.taked_card}
+        %{
+          match_player: match_player,
+          asked_beat: match_event.type == "ASK_BEAT",
+          taked_card: match_event.taked_card
+        }
 
       _ ->
-        %{match_player: match_player, taked_card: nil}
+        %{match_player: match_player, asked_beat: false, taked_card: nil}
     end
   end
 

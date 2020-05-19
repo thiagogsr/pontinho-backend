@@ -12,8 +12,14 @@ defmodule PontinhoWeb.MatchPlayerSerializerTest do
       assert %{
                match_player_id: _,
                match_player_hand: match_player_hand,
+               asked_beat: false,
                taked_card: nil
-             } = MatchPlayerSerializer.serialize(%{match_player: match_player, taked_card: nil})
+             } =
+               MatchPlayerSerializer.serialize(%{
+                 match_player: match_player,
+                 asked_beat: false,
+                 taked_card: nil
+               })
 
       assert is_list(match_player_hand)
       assert length(match_player_hand) == 9
