@@ -36,7 +36,7 @@ defmodule Pontinho.FinishMatch do
   defp calculate_match_points(match_players, joker) do
     Enum.map(match_players, fn %{player: player} = match_player ->
       points = CalculatePoints.run(match_player.hand, joker)
-      broke = points > player.points
+      broke = if points > player.points, do: player.broke_times + 1
 
       match_player
       |> cast(%{points: points, broke: broke}, [:points, :broke])

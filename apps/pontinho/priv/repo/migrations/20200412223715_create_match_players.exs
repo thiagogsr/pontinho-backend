@@ -8,7 +8,7 @@ defmodule Pontinho.Repo.Migrations.CreateMatchPlayers do
       add :false_beat, :boolean
       add :points_before, :integer
       add :points, :integer
-      add :broke, :boolean
+      add :broke, :integer
       add :match_id, references(:matches, on_delete: :nothing, type: :binary_id), null: false
       add :player_id, references(:players, on_delete: :nothing, type: :binary_id), null: false
 

@@ -38,9 +38,9 @@ defmodule PontinhoWeb.GameView do
           %{
             id: match_player.id,
             name: match_player.player.name,
+            broke: match_player.broke,
             points_before: match_player.points_before,
-            points: cast_points(match_player.points),
-            points_after: calculate_match_points(match_player.points_before, match_player.points)
+            points: cast_points(match_player.points)
           }
         end)
     }
@@ -48,7 +48,4 @@ defmodule PontinhoWeb.GameView do
 
   defp cast_points(points) when is_nil(points), do: "-"
   defp cast_points(points), do: points
-
-  defp calculate_match_points(_points_before, points) when is_nil(points), do: "-"
-  defp calculate_match_points(points_before, points), do: points_before - points
 end

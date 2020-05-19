@@ -15,7 +15,7 @@ defmodule Pontinho.MatchPlayer do
     field :false_beat, :boolean
     field :points_before, :integer
     field :points, :integer
-    field :broke, :boolean
+    field :broke, :integer
     belongs_to :match, Match
     belongs_to :player, Player
 

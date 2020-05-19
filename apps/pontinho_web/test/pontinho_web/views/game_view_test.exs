@@ -39,7 +39,13 @@ defmodule PontinhoWeb.GameViewTest do
                  id: nil,
                  croupier: "Player",
                  match_players: [
-                   %{id: nil, name: "Player", points_before: 99, points: "-", points_after: "-"}
+                   %{
+                     id: nil,
+                     name: "Player",
+                     broke: nil,
+                     points_before: 99,
+                     points: "-"
+                   }
                  ]
                }
              ]
@@ -54,7 +60,7 @@ defmodule PontinhoWeb.GameViewTest do
   test "returns the game with a finished match" do
     game = build(:game, betting_table: [10, 10, 10, 10, 10])
     player = build(:player, name: "Player", points: 79)
-    match_player = build(:match_player, player: player, points_before: 99, points: 20)
+    match_player = build(:match_player, player: player, points_before: 10, points: 20, broke: 1)
     match = build(:match, match_players: [match_player], croupier: player)
 
     assert %{
@@ -66,7 +72,13 @@ defmodule PontinhoWeb.GameViewTest do
                  id: nil,
                  croupier: "Player",
                  match_players: [
-                   %{id: nil, name: "Player", points_before: 99, points: 20, points_after: 79}
+                   %{
+                     id: nil,
+                     name: "Player",
+                     broke: 1,
+                     points_before: 10,
+                     points: 20
+                   }
                  ]
                }
              ]

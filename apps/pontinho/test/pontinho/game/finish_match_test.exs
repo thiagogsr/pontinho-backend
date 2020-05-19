@@ -20,12 +20,12 @@ defmodule Pontinho.FinishMatchTest do
 
     assert {:ok, %Match{} = match} = FinishMatch.run(match, winner)
 
-    assert %MatchPlayer{points: 0, broke: false, player: %Player{broke_times: 0, points: 99}} =
+    assert %MatchPlayer{points: 0, broke: nil, player: %Player{broke_times: 0, points: 99}} =
              match.winner
 
     assert Enum.count(
              match.match_players,
-             &(!&1.broke &&
+             &(is_nil(&1.broke) &&
                  &1.points == 25 &&
                  &1.player.broke_times == 0 &&
                  &1.player.points == 74)
@@ -69,12 +69,12 @@ defmodule Pontinho.FinishMatchTest do
 
     assert {:ok, %Match{} = match} = FinishMatch.run(match, winner)
 
-    assert %MatchPlayer{points: 0, broke: false, player: %Player{broke_times: 2, points: 99}} =
+    assert %MatchPlayer{points: 0, broke: nil, player: %Player{broke_times: 2, points: 99}} =
              match.winner
 
     assert Enum.count(
              match.match_players,
-             &(!&1.broke &&
+             &(is_nil(&1.broke) &&
                  &1.points == 35 &&
                  &1.player.broke_times == 1 &&
                  &1.player.points == 64)
@@ -82,7 +82,7 @@ defmodule Pontinho.FinishMatchTest do
 
     assert Enum.count(
              match.match_players,
-             &(&1.broke &&
+             &(&1.broke == 4 &&
                  &1.points == 100 &&
                  &1.player.broke_times == 4 &&
                  &1.player.points == 64)
@@ -120,12 +120,12 @@ defmodule Pontinho.FinishMatchTest do
 
     assert {:ok, %Match{} = match} = FinishMatch.run(match, winner)
 
-    assert %MatchPlayer{points: 0, broke: false, player: %Player{broke_times: 2, points: 99}} =
+    assert %MatchPlayer{points: 0, broke: nil, player: %Player{broke_times: 2, points: 99}} =
              match.winner
 
     assert Enum.count(
              match.match_players,
-             &(&1.broke &&
+             &(&1.broke == 4 &&
                  &1.points == 100 &&
                  &1.player.broke_times == 4 &&
                  &1.player.points == 99 &&
