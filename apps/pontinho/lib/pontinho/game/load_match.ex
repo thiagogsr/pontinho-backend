@@ -50,17 +50,24 @@ defmodule Pontinho.LoadMatch do
     )
   end
 
-  defp get_last_match_event(match_id) do
+  defp get_last_match_event(match_id, ignored_types \\ []) do
     query =
       from(
         me in MatchEvent,
         where: me.match_id == ^match_id,
+        where: me.type not in ^ignored_types,
         order_by: [desc: me.inserted_at],
         limit: 1,
         preload: [:match_player]
       )
 
-    Repo.one(query)
+    case Repo.one(query) do
+      %MatchEvent{type: "FALSE_BEAT"} ->
+        get_last_match_event(match_id, ["FALSE_BEAT", "ASK_BEAT"])
+
+      match_event ->
+        match_event
+    end
   end
 
   defp get_next_match_player(match, last_event) when is_nil(last_event) do

@@ -98,4 +98,19 @@ defmodule Pontinho.LoadMatchTest do
 
     assert round_match_player.id == first_match_player.id
   end
+
+  test "returns the correct round match player when previous event type is FALSE_BEAT" do
+    match = insert(:match)
+
+    [first_match_player, second_match_player, third_match_player] =
+      insert_list(3, :match_player, match: match)
+
+    insert(:match_event, match: match, match_player: first_match_player, type: "DISCARD")
+    insert(:match_event, match: match, match_player: third_match_player, type: "ASK_BEAT")
+    insert(:match_event, match: match, match_player: third_match_player, type: "FALSE_BEAT")
+
+    assert %{match: _, round_match_player: round_match_player} = LoadMatch.run(match.id)
+
+    assert round_match_player.id == second_match_player.id
+  end
 end
