@@ -376,11 +376,23 @@ defmodule Pontinho.CreateMatchEventTest do
     test "returns ok when match player did not false beat yet" do
       match = insert(:match)
       match_player = insert(:match_player, false_beat: false)
+      insert(:match_event, match: match, type: "DISCARD")
 
       assert {:ok, %MatchEvent{} = match_event} =
                CreateMatchEvent.run(match, match_player, nil, "ASK_BEAT", [])
 
       assert match_event.type == "ASK_BEAT"
+    end
+
+    test "returns error when the previous event type is ASK_BEAT" do
+      match = insert(:match)
+      match_player = insert(:match_player, false_beat: false)
+      insert(:match_event, match: match, type: "ASK_BEAT")
+
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               CreateMatchEvent.run(match, match_player, nil, "ASK_BEAT", [])
+
+      assert %{cards: ["invalid operation"]} = errors_on(changeset)
     end
 
     test "returns error when match player false bet before" do
