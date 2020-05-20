@@ -6,7 +6,7 @@ defmodule Pontinho.Event.AskBeat do
   @behaviour Pontinho.Event
 
   def validate(_match, match_player, _match_collection, _cards, previous_event) do
-    if match_player.false_beat || previous_event.type == "ASK_BEAT" do
+    if match_player.false_beat || is_nil(previous_event) || previous_event.type == "ASK_BEAT" do
       ["invalid operation"]
     else
       []

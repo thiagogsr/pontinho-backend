@@ -384,6 +384,16 @@ defmodule Pontinho.CreateMatchEventTest do
       assert match_event.type == "ASK_BEAT"
     end
 
+    test "returns error when there is no previous event" do
+      match = insert(:match)
+      match_player = insert(:match_player, false_beat: false)
+
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               CreateMatchEvent.run(match, match_player, nil, "ASK_BEAT", [])
+
+      assert %{cards: ["invalid operation"]} = errors_on(changeset)
+    end
+
     test "returns error when the previous event type is ASK_BEAT" do
       match = insert(:match)
       match_player = insert(:match_player, false_beat: false)
@@ -586,6 +596,20 @@ defmodule Pontinho.CreateMatchEventTest do
       %MatchPlayer{hand: match_player_hand} = Repo.get(MatchPlayer, match_player.id)
       assert length(match_player_hand) == length(match_player.hand) - 1
       assert %{"value" => "2", "suit" => "clubs", "deck" => 1} not in match_player_hand
+    end
+
+    test "returns error when there is not previous event" do
+      match = insert(:match, joker: %{"value" => "10", "suit" => "clubs", "deck" => 1})
+
+      match_player =
+        insert(:match_player, hand: [%{"value" => "2", "suit" => "clubs", "deck" => 1}])
+
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               CreateMatchEvent.run(match, match_player, nil, "DISCARD", [
+                 %{"value" => "2", "suit" => "clubs", "deck" => 1}
+               ])
+
+      assert %{cards: ["invalid operation"]} = errors_on(changeset)
     end
 
     test "returns error when the previous event type is valid but made by other match player" do

@@ -14,7 +14,7 @@ defmodule Pontinho.Event.Discard do
       match.joker == card ->
         ["you cannot discard the joker"]
 
-      previous_event.match_player_id == match_player.id &&
+      !is_nil(previous_event) && previous_event.match_player_id == match_player.id &&
         card in match_player.hand &&
           previous_event.type in ["DROP_COLLECTION", "BUY", "ACCEPT_FIRST_CARD"] ->
         []
