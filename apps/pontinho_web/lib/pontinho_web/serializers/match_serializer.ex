@@ -23,8 +23,19 @@ defmodule PontinhoWeb.MatchSerializer do
     %{
       id: match_collection.id,
       type: match_collection.type,
-      cards: match_collection.cards
+      cards: group_cards(match_collection.cards)
     }
+  end
+
+  defp group_cards(cards) do
+    cards
+    |> Enum.group_by(&(&1["value"] && &1["suit"]))
+    |> Enum.map(fn {_agg, grouped_cards} ->
+      case grouped_cards do
+        [card] -> card
+        cards -> cards
+      end
+    end)
   end
 
   defp match_player_json(match_player) do

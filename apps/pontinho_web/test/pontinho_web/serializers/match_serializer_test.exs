@@ -39,6 +39,39 @@ defmodule PontinhoWeb.MatchSerializerTest do
       assert round_match_player_id == round_match_player.id
     end
 
+    test "returns the same cards grouped in match collections" do
+      [round_match_player | _] = match_players = build_list(5, :match_player)
+
+      cards = [
+        %{"value" => "2", "suit" => "hearts", "deck" => 1},
+        %{"value" => "2", "suit" => "clubs", "deck" => 1},
+        %{"value" => "2", "suit" => "spades", "deck" => 1},
+        %{"value" => "2", "suit" => "hearts", "deck" => 2}
+      ]
+
+      match_collection = build(:match_collection, type: "trio", cards: cards)
+      match = build(:match, match_players: match_players, match_collections: [match_collection])
+
+      assert %{match_collections: serialized_match_collections} =
+               MatchSerializer.serialize(%{match: match, round_match_player: round_match_player})
+
+      assert is_list(serialized_match_collections)
+      assert length(serialized_match_collections) == 1
+
+      assert %{
+               id: _,
+               type: "trio",
+               cards: [
+                 %{"value" => "2", "suit" => "clubs", "deck" => 1},
+                 [
+                   %{"value" => "2", "suit" => "hearts", "deck" => 1},
+                   %{"value" => "2", "suit" => "hearts", "deck" => 2}
+                 ],
+                 %{"value" => "2", "suit" => "spades", "deck" => 1}
+               ]
+             } = hd(serialized_match_collections)
+    end
+
     test "returns a serialized match without stock" do
       [round_match_player | _] = match_players = build_list(5, :match_player)
       match_collections = build_list(2, :match_collection)
