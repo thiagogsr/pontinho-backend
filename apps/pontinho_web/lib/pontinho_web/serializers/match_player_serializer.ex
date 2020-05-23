@@ -11,6 +11,8 @@ defmodule PontinhoWeb.MatchPlayerSerializer do
       match_player_hand: match_player.hand,
       false_beat: match_player.false_beat,
       asked_beat: false,
+      bought_first_card: false,
+      taked_discard_pile: false,
       taked_card: nil
     }
   end
@@ -22,6 +24,7 @@ defmodule PontinhoWeb.MatchPlayerSerializer do
       false_beat: match_player.false_beat,
       asked_beat: previous_event.type == "ASK_BEAT",
       bought_first_card: previous_event.type == "BUY_FIRST_CARD",
+      taked_discard_pile: previous_event.type == "TAKE_DISCARD_PILE",
       taked_card: previous_event.taked_card
     }
   end

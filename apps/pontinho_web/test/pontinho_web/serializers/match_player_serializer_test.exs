@@ -14,6 +14,8 @@ defmodule PontinhoWeb.MatchPlayerSerializerTest do
                match_player_id: _,
                match_player_hand: match_player_hand,
                asked_beat: true,
+               bought_first_card: false,
+               taked_discard_pile: false,
                taked_card: nil
              } =
                MatchPlayerSerializer.serialize(%{
@@ -38,6 +40,34 @@ defmodule PontinhoWeb.MatchPlayerSerializerTest do
                match_player_id: _,
                match_player_hand: match_player_hand,
                asked_beat: false,
+               bought_first_card: true,
+               taked_discard_pile: false,
+               taked_card: %{"value" => "10", "suit" => "hearts", "deck" => 1}
+             } =
+               MatchPlayerSerializer.serialize(%{
+                 match_player: match_player,
+                 previous_event: match_event
+               })
+
+      assert is_list(match_player_hand)
+      assert length(match_player_hand) == 9
+    end
+
+    test "returns a serialized match player with previous_event's type equals to TAKE_DISCARD_PILE" do
+      match_player = build(:match_player)
+
+      match_event =
+        build(:match_event,
+          type: "TAKE_DISCARD_PILE",
+          taked_card: %{"value" => "10", "suit" => "hearts", "deck" => 1}
+        )
+
+      assert %{
+               match_player_id: _,
+               match_player_hand: match_player_hand,
+               asked_beat: false,
+               bought_first_card: false,
+               taked_discard_pile: true,
                taked_card: %{"value" => "10", "suit" => "hearts", "deck" => 1}
              } =
                MatchPlayerSerializer.serialize(%{
@@ -56,6 +86,8 @@ defmodule PontinhoWeb.MatchPlayerSerializerTest do
                match_player_id: _,
                match_player_hand: match_player_hand,
                asked_beat: false,
+               bought_first_card: false,
+               taked_discard_pile: false,
                taked_card: nil
              } =
                MatchPlayerSerializer.serialize(%{
