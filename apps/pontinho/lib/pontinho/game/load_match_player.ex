@@ -9,26 +9,24 @@ defmodule Pontinho.LoadMatchPlayer do
 
   @spec run(%{match_id: String.t(), player_id: String.t()}) :: %{
           match_player: %MatchPlayer{} | nil,
-          asked_beat: boolean,
-          taked_card: map() | nil
+          previous_event: %MatchEvent{} | nil
         }
   def run(%{match_id: match_id, player_id: player_id}) do
     match_id
     |> match_player_query(player_id)
     |> Repo.one()
-    |> load_taked_card()
+    |> load_previous_event()
   end
 
   @spec run!(%{match_id: String.t(), player_id: String.t()}) :: %{
           match_player: %MatchPlayer{},
-          asked_beat: boolean,
-          taked_card: map() | nil
+          previous_event: %MatchEvent{} | nil
         }
   def run!(%{match_id: match_id, player_id: player_id}) do
     match_id
     |> match_player_query(player_id)
     |> Repo.one!()
-    |> load_taked_card()
+    |> load_previous_event()
   end
 
   @spec run!(%{match_player_id: String.t()}) :: %{
@@ -39,7 +37,7 @@ defmodule Pontinho.LoadMatchPlayer do
   def run!(%{match_player_id: match_player_id}) do
     MatchPlayer
     |> Repo.get!(match_player_id)
-    |> load_taked_card()
+    |> load_previous_event()
   end
 
   defp match_player_query(match_id, player_id) do
@@ -51,22 +49,21 @@ defmodule Pontinho.LoadMatchPlayer do
     )
   end
 
-  defp load_taked_card(match_player) when is_nil(match_player) do
-    %{match_player: match_player, asked_beat: false, taked_card: nil}
+  defp load_previous_event(match_player) when is_nil(match_player) do
+    %{match_player: nil, previous_event: nil}
   end
 
-  defp load_taked_card(%{id: match_player_id} = match_player) do
+  defp load_previous_event(%{id: match_player_id} = match_player) do
     case load_last_match_event(match_player.match_id) do
       %MatchEvent{match_player_id: event_match_player_id} = match_event
       when event_match_player_id == match_player_id ->
         %{
           match_player: match_player,
-          asked_beat: match_event.type == "ASK_BEAT",
-          taked_card: match_event.taked_card
+          previous_event: match_event
         }
 
       _ ->
-        %{match_player: match_player, asked_beat: false, taked_card: nil}
+        %{match_player: match_player, previous_event: nil}
     end
   end
 

@@ -5,7 +5,7 @@ defmodule Pontinho.LoadMatchPlayerTest do
 
   alias Pontinho.LoadMatchPlayer
 
-  test "returns the match player and the taked card when the last event was made by its" do
+  test "returns the match player and previous event when it was made by the match player" do
     match = insert(:match)
     player = insert(:player)
     match_player = insert(:match_player, match: match, player: player)
@@ -13,100 +13,65 @@ defmodule Pontinho.LoadMatchPlayerTest do
     insert(:match_event,
       match: match,
       match_player: match_player,
+      type: "BUY_FIRST_CARD",
       taked_card: %{"value" => "10", "suit" => "hearts", "deck" => 1}
     )
 
-    assert %{match_player: returned_match_player, asked_beat: false, taked_card: taked_card} =
+    assert %{match_player: returned_match_player, previous_event: previous_event} =
              LoadMatchPlayer.run(%{match_id: match.id, player_id: player.id})
 
     assert returned_match_player.id == match_player.id
-    assert taked_card == %{"value" => "10", "suit" => "hearts", "deck" => 1}
+    assert %{taked_card: %{"value" => "10", "suit" => "hearts", "deck" => 1}} = previous_event
 
-    assert %{match_player: returned_match_player, asked_beat: false, taked_card: taked_card} =
+    assert %{match_player: returned_match_player, previous_event: previous_event} =
              LoadMatchPlayer.run!(%{match_player_id: match_player.id})
 
     assert returned_match_player.id == match_player.id
-    assert taked_card == %{"value" => "10", "suit" => "hearts", "deck" => 1}
+    assert %{taked_card: %{"value" => "10", "suit" => "hearts", "deck" => 1}} = previous_event
   end
 
-  test "returns the match player and asked beat when the last event was made by its and its type is ASK_BEAT" do
+  test "returns the match player when the previous event was made by other match player" do
     match = insert(:match)
     player = insert(:player)
     match_player = insert(:match_player, match: match, player: player)
-    insert(:match_event, match: match, match_player: match_player, type: "ASK_BEAT")
+    insert(:match_event, match: match)
 
-    assert %{match_player: returned_match_player, asked_beat: true, taked_card: nil} =
+    assert %{match_player: returned_match_player, previous_event: previous_event} =
              LoadMatchPlayer.run(%{match_id: match.id, player_id: player.id})
 
     assert returned_match_player.id == match_player.id
+    assert is_nil(previous_event)
 
-    assert %{match_player: returned_match_player, asked_beat: true, taked_card: nil} =
+    assert %{match_player: returned_match_player, previous_event: previous_event} =
              LoadMatchPlayer.run!(%{match_player_id: match_player.id})
 
     assert returned_match_player.id == match_player.id
+    assert is_nil(previous_event)
   end
 
-  test "returns the match player when the last event was made by its but it has no taked card" do
-    match = insert(:match)
-    player = insert(:player)
-    match_player = insert(:match_player, match: match, player: player)
-    insert(:match_event, match: match, match_player: match_player, taked_card: nil)
-
-    assert %{match_player: returned_match_player, asked_beat: false, taked_card: nil} =
-             LoadMatchPlayer.run(%{match_id: match.id, player_id: player.id})
-
-    assert returned_match_player.id == match_player.id
-
-    assert %{match_player: returned_match_player, asked_beat: false, taked_card: nil} =
-             LoadMatchPlayer.run!(%{match_player_id: match_player.id})
-
-    assert returned_match_player.id == match_player.id
-  end
-
-  test "returns the match player when the last event was not made by its" do
+  test "returns the match player when there is not previous event" do
     match = insert(:match)
     player = insert(:player)
     match_player = insert(:match_player, match: match, player: player)
 
-    insert(:match_event,
-      match: match,
-      taked_card: %{"value" => "10", "suit" => "hearts", "deck" => 1}
-    )
-
-    assert %{match_player: returned_match_player, asked_beat: false, taked_card: nil} =
+    assert %{match_player: returned_match_player, previous_event: previous_event} =
              LoadMatchPlayer.run(%{match_id: match.id, player_id: player.id})
 
     assert returned_match_player.id == match_player.id
+    assert is_nil(previous_event)
 
-    assert %{match_player: returned_match_player, asked_beat: false, taked_card: nil} =
+    assert %{match_player: returned_match_player, previous_event: previous_event} =
              LoadMatchPlayer.run!(%{match_player_id: match_player.id})
 
     assert returned_match_player.id == match_player.id
-  end
-
-  test "returns the match player when there is not last event" do
-    match = insert(:match)
-    player = insert(:player)
-    match_player = insert(:match_player, match: match, player: player)
-
-    assert %{match_player: returned_match_player, asked_beat: false, taked_card: taked_card} =
-             LoadMatchPlayer.run(%{match_id: match.id, player_id: player.id})
-
-    assert returned_match_player.id == match_player.id
-    assert is_nil(taked_card)
-
-    assert %{match_player: returned_match_player, asked_beat: false, taked_card: taked_card} =
-             LoadMatchPlayer.run!(%{match_player_id: match_player.id})
-
-    assert returned_match_player.id == match_player.id
-    assert is_nil(taked_card)
+    assert is_nil(previous_event)
   end
 
   test "returns nothing when match player was not found" do
     match = insert(:match)
     player = insert(:player)
 
-    assert %{match_player: nil, asked_beat: false, taked_card: nil} =
+    assert %{match_player: nil, previous_event: nil} =
              LoadMatchPlayer.run(%{match_id: match.id, player_id: player.id})
 
     assert_raise Ecto.NoResultsError, fn ->
