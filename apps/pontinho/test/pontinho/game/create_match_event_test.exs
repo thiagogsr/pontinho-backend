@@ -993,13 +993,14 @@ defmodule Pontinho.CreateMatchEventTest do
 
   describe "REPLACE_JOKER" do
     test "returns ok when the match collection has a joker and match player has the replacement card" do
-      match = insert(:match, joker: %{"value" => "2", "suit" => "clubs", "deck" => 1})
+      match = insert(:match, joker: %{"value" => "2", "suit" => "clubs", "deck" => 2})
 
       match_player =
         insert(:match_player, hand: [%{"value" => "2", "suit" => "diamonds", "deck" => 1}])
 
       random_type =
-        ["BUY", "ASK_BEAT", "DROP_COLLECTION", "ADD_CARD_TO_COLLECTION"] |> Enum.random()
+        ["BUY", "ASK_BEAT", "DROP_COLLECTION", "ADD_CARD_TO_COLLECTION"]
+        |> Enum.random()
 
       insert(:match_event, match: match, match_player: match_player, type: random_type)
 

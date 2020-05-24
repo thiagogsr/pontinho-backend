@@ -30,7 +30,7 @@ defmodule Pontinho.DeckTest do
       deck = CreateDeck.run()
       {card, stock} = Deck.buy(deck)
 
-      assert %{"value" => _, "suit" => _} = card
+      assert %{"value" => _, "suit" => _, "deck" => _} = card
       assert length(stock) == 103
     end
   end
@@ -113,7 +113,33 @@ defmodule Pontinho.DeckTest do
     end
   end
 
-  describe "member?" do
+  describe "find_card/2" do
+    test "returns the card when the card is found in cards list disregarding the deck" do
+      cards = [
+        %{"value" => "9", "suit" => "hearts", "deck" => 1},
+        %{"value" => "2", "suit" => "diamonds", "deck" => 1},
+        %{"value" => "J", "suit" => "hearts", "deck" => 1}
+      ]
+
+      card = %{"value" => "J", "suit" => "hearts", "deck" => 2}
+
+      assert %{"value" => "J", "suit" => "hearts", "deck" => 1} = Deck.find_card(cards, card)
+    end
+
+    test "returns nil when the card is not found" do
+      cards = [
+        %{"value" => "9", "suit" => "hearts", "deck" => 1},
+        %{"value" => "2", "suit" => "diamonds", "deck" => 1},
+        %{"value" => "J", "suit" => "hearts", "deck" => 1}
+      ]
+
+      card = %{"value" => "10", "suit" => "hearts", "deck" => 2}
+
+      assert is_nil(Deck.find_card(cards, card))
+    end
+  end
+
+  describe "member?/2" do
     test "returns true when card belongs to the cards list disregarding the deck" do
       cards = [
         %{"value" => "9", "suit" => "hearts", "deck" => 1},
@@ -123,7 +149,7 @@ defmodule Pontinho.DeckTest do
 
       card = %{"value" => "J", "suit" => "hearts", "deck" => 2}
 
-      assert Deck.member?(cards, card)
+      assert Deck.member?(cards, card) == true
     end
 
     test "returns false when card does not belong to the cards list disregarding the deck" do
@@ -135,7 +161,7 @@ defmodule Pontinho.DeckTest do
 
       card = %{"value" => "10", "suit" => "hearts", "deck" => 1}
 
-      refute Deck.member?(cards, card)
+      assert Deck.member?(cards, card) == false
     end
   end
 end

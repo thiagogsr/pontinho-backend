@@ -26,8 +26,8 @@ defmodule Pontinho.Deck do
   end
 
   @spec remove_cards(list(map), list(map)) :: list(map)
-  def remove_cards(cards, cards_to_be_taked) do
-    cards -- cards_to_be_taked
+  def remove_cards(cards, cards_to_be_removed) do
+    cards -- cards_to_be_removed
   end
 
   @spec value_index(String.t()) :: non_neg_integer
@@ -57,8 +57,16 @@ defmodule Pontinho.Deck do
     end
   end
 
+  @spec find_card(list(map), map) :: map | nil
+  def find_card(cards, card) do
+    Enum.find(cards, &(&1["value"] == card["value"] && &1["suit"] == card["suit"]))
+  end
+
   @spec member?(list(map), map) :: boolean
   def member?(cards, card) do
-    Enum.find(cards, &(&1["value"] == card["value"] && &1["suit"] == card["suit"]))
+    case find_card(cards, card) do
+      nil -> false
+      _ -> true
+    end
   end
 end
