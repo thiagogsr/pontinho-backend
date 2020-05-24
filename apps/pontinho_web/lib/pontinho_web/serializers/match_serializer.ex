@@ -8,6 +8,7 @@ defmodule PontinhoWeb.MatchSerializer do
     %{
       match_id: match.id,
       pre_joker: match.pre_joker,
+      joker: match.joker,
       head_stock_deck: head_stock_deck(match.stock),
       head_discard_pile: match.discard_pile |> List.first(),
       match_collections: Enum.map(match.match_collections, &match_collection_json/1),

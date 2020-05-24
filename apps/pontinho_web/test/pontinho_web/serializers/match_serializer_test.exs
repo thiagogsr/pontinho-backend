@@ -24,12 +24,14 @@ defmodule PontinhoWeb.MatchSerializerTest do
           match_collections: match_collections,
           stock: [%{"suit" => "clubs", "value" => "A", "deck" => 2}],
           discard_pile: [%{"suit" => "suits", "value" => "J", "deck" => 2}],
-          pre_joker: %{"suit" => "hearts", "value" => "10", "deck" => 1}
+          pre_joker: %{"suit" => "hearts", "value" => "10", "deck" => 1},
+          joker: %{"suit" => "hearts", "value" => "J", "deck" => 1}
         )
 
       assert %{
                match_id: _,
                pre_joker: %{"suit" => "hearts", "value" => "10", "deck" => 1},
+               joker: %{"suit" => "hearts", "value" => "J", "deck" => 1},
                head_stock_deck: 2,
                head_discard_pile: %{"suit" => "suits", "value" => "J", "deck" => 2},
                match_collections: serialized_match_collections,
@@ -101,12 +103,14 @@ defmodule PontinhoWeb.MatchSerializerTest do
           match_collections: match_collections,
           stock: [],
           discard_pile: [%{"suit" => "suits", "value" => "J", "deck" => 2}],
-          pre_joker: %{"suit" => "hearts", "value" => "10", "deck" => 1}
+          pre_joker: %{"suit" => "hearts", "value" => "10", "deck" => 1},
+          joker: %{"suit" => "hearts", "value" => "J", "deck" => 1}
         )
 
       assert %{
                match_id: _,
                pre_joker: %{"suit" => "hearts", "value" => "10", "deck" => 1},
+               joker: %{"suit" => "hearts", "value" => "J", "deck" => 1},
                head_stock_deck: nil,
                head_discard_pile: %{"suit" => "suits", "value" => "J", "deck" => 2},
                match_collections: serialized_match_collections,
