@@ -37,7 +37,13 @@ defmodule Pontinho.Event.DropCollection do
       previous_event.type == "TAKE_DISCARD_PILE" && previous_event.taked_card in cards ->
         true
 
-      previous_event.type in ["BUY", "ASK_BEAT", "DROP_COLLECTION", "ADD_CARD_TO_COLLECTION"] ->
+      previous_event.type in [
+        "BUY",
+        "ASK_BEAT",
+        "DROP_COLLECTION",
+        "ADD_CARD_TO_COLLECTION",
+        "ACCEPT_FIRST_CARD"
+      ] ->
         true
 
       true ->
