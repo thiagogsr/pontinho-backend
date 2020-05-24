@@ -4,6 +4,7 @@ defmodule Pontinho.CollectionWithJoker do
   """
 
   alias Pontinho.Collection.ValidateSequence
+  alias Pontinho.Deck
 
   def validate(cards, values, suits, joker, beat) do
     case values |> Enum.uniq() |> length() do
@@ -25,7 +26,7 @@ defmodule Pontinho.CollectionWithJoker do
   end
 
   defp validate_sequence_joker(first_card, last_card, joker, beat) do
-    if !beat && joker in [first_card, last_card] do
+    if !beat && Deck.member?([first_card, last_card], joker) do
       {:error, "joker cannot be in the corner"}
     else
       :ok

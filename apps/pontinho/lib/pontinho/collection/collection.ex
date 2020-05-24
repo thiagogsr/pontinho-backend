@@ -3,7 +3,7 @@ defmodule Pontinho.Collection do
   Collection validator
   """
 
-  alias Pontinho.{CollectionWithJoker, CollectionWithoutJoker}
+  alias Pontinho.{CollectionWithJoker, CollectionWithoutJoker, Deck}
 
   @spec validate(list(map), map, boolean) :: {:ok, %{type: String.t()}} | {:error, String.t()}
   def validate(cards, _joker, _beat) when length(cards) < 3 do
@@ -19,7 +19,7 @@ defmodule Pontinho.Collection do
     values = Enum.reverse(values)
     suits = Enum.reverse(suits)
 
-    if joker in cards do
+    if Deck.member?(cards, joker) do
       CollectionWithJoker.validate(cards, values, suits, joker, beat)
     else
       CollectionWithoutJoker.validate(cards, values, suits)

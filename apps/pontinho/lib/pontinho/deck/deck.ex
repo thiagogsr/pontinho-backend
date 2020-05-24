@@ -56,4 +56,9 @@ defmodule Pontinho.Deck do
       index -> List.replace_at(cards, index, new_card)
     end
   end
+
+  @spec member?(list(map), map) :: boolean
+  def member?(cards, card) do
+    Enum.find(cards, &(&1["value"] == card["value"] && &1["suit"] == card["suit"]))
+  end
 end

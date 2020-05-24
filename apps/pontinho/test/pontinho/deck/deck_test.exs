@@ -112,4 +112,30 @@ defmodule Pontinho.DeckTest do
                ]
     end
   end
+
+  describe "member?" do
+    test "returns true when card belongs to the cards list disregarding the deck" do
+      cards = [
+        %{"value" => "9", "suit" => "hearts", "deck" => 1},
+        %{"value" => "2", "suit" => "diamonds", "deck" => 1},
+        %{"value" => "J", "suit" => "hearts", "deck" => 1}
+      ]
+
+      card = %{"value" => "J", "suit" => "hearts", "deck" => 2}
+
+      assert Deck.member?(cards, card)
+    end
+
+    test "returns false when card does not belong to the cards list disregarding the deck" do
+      cards = [
+        %{"value" => "9", "suit" => "hearts", "deck" => 1},
+        %{"value" => "2", "suit" => "diamonds", "deck" => 1},
+        %{"value" => "J", "suit" => "hearts", "deck" => 1}
+      ]
+
+      card = %{"value" => "10", "suit" => "hearts", "deck" => 1}
+
+      refute Deck.member?(cards, card)
+    end
+  end
 end
