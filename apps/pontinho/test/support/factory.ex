@@ -47,9 +47,9 @@ defmodule Pontinho.Factory do
   def match_collection_factory do
     %Pontinho.MatchCollection{
       cards: [
-        %{"value" => "2", "suit" => "diamonds", "deck" => 1},
-        %{"value" => "3", "suit" => "diamonds", "deck" => 1},
-        %{"value" => "4", "suit" => "diamonds", "deck" => 1}
+        %{"value" => "2", "suit" => "diamonds", "deck" => 1, "order" => 0},
+        %{"value" => "3", "suit" => "diamonds", "deck" => 1, "order" => 1},
+        %{"value" => "4", "suit" => "diamonds", "deck" => 1, "order" => 2}
       ],
       type: "sequence",
       match: build(:match),

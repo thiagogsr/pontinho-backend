@@ -25,6 +25,12 @@ defmodule Pontinho.CreateMatchCollectionTest do
              CreateMatchCollection.run(match, match_player, type, cards)
 
     assert match_collection.dropped_by == match_player
+
+    assert Enum.map(match_collection.cards, &{&1["value"], &1["order"]}) == [
+             {"2", 0},
+             {"3", 1},
+             {"4", 2}
+           ]
   end
 
   test "returns error when there are less than 3 cards", %{

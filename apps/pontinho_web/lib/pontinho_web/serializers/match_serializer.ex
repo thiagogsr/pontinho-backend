@@ -20,21 +20,32 @@ defmodule PontinhoWeb.MatchSerializer do
   defp head_stock_deck([head | _tail] = _stock), do: head["deck"]
 
   defp match_collection_json(match_collection) do
+    cards =
+      match_collection.cards
+      |> group_cards()
+      |> sort_cards()
+
     %{
       id: match_collection.id,
       type: match_collection.type,
-      cards: group_cards(match_collection.cards)
+      cards: cards
     }
   end
 
   defp group_cards(cards) do
     cards
-    |> Enum.group_by(&(&1["value"] && &1["suit"]))
+    |> Enum.group_by(&{&1["value"], &1["suit"]})
     |> Enum.map(fn {_agg, grouped_cards} ->
       case grouped_cards do
         [card] -> card
         cards -> cards
       end
+    end)
+  end
+
+  defp sort_cards(cards) do
+    Enum.sort_by(cards, fn item ->
+      if is_list(item), do: sort_cards(item), else: item["order"]
     end)
   end
 

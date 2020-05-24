@@ -8,7 +8,15 @@ defmodule PontinhoWeb.MatchSerializerTest do
   describe "serialize/1" do
     test "returns a serialized match with stock" do
       [round_match_player | _] = match_players = build_list(5, :match_player)
-      match_collections = build_list(2, :match_collection)
+
+      cards = [
+        %{"value" => "A", "suit" => "hearts", "deck" => 1, "order" => 0},
+        %{"value" => "2", "suit" => "hearts", "deck" => 1, "order" => 1},
+        %{"value" => "3", "suit" => "hearts", "deck" => 1, "order" => 2},
+        %{"value" => "4", "suit" => "hearts", "deck" => 2, "order" => 3}
+      ]
+
+      match_collections = build_list(2, :match_collection, cards: cards, type: "sequence")
 
       match =
         build(:match,
@@ -33,6 +41,17 @@ defmodule PontinhoWeb.MatchSerializerTest do
       assert is_list(serialized_match_collections)
       assert length(serialized_match_collections) == 2
 
+      assert %{
+               id: _,
+               type: "sequence",
+               cards: [
+                 %{"value" => "A", "suit" => "hearts", "deck" => 1, "order" => 0},
+                 %{"value" => "2", "suit" => "hearts", "deck" => 1, "order" => 1},
+                 %{"value" => "3", "suit" => "hearts", "deck" => 1, "order" => 2},
+                 %{"value" => "4", "suit" => "hearts", "deck" => 2, "order" => 3}
+               ]
+             } = hd(serialized_match_collections)
+
       assert is_list(serialized_match_players)
       assert length(serialized_match_players) == 5
 
@@ -43,10 +62,10 @@ defmodule PontinhoWeb.MatchSerializerTest do
       [round_match_player | _] = match_players = build_list(5, :match_player)
 
       cards = [
-        %{"value" => "2", "suit" => "hearts", "deck" => 1},
-        %{"value" => "2", "suit" => "clubs", "deck" => 1},
-        %{"value" => "2", "suit" => "spades", "deck" => 1},
-        %{"value" => "2", "suit" => "hearts", "deck" => 2}
+        %{"value" => "2", "suit" => "hearts", "deck" => 1, "order" => 1},
+        %{"value" => "2", "suit" => "clubs", "deck" => 1, "order" => 0},
+        %{"value" => "2", "suit" => "spades", "deck" => 1, "order" => 3},
+        %{"value" => "2", "suit" => "hearts", "deck" => 2, "order" => 2}
       ]
 
       match_collection = build(:match_collection, type: "trio", cards: cards)
@@ -62,12 +81,12 @@ defmodule PontinhoWeb.MatchSerializerTest do
                id: _,
                type: "trio",
                cards: [
-                 %{"value" => "2", "suit" => "clubs", "deck" => 1},
+                 %{"value" => "2", "suit" => "clubs", "deck" => 1, "order" => 0},
+                 %{"value" => "2", "suit" => "spades", "deck" => 1, "order" => 3},
                  [
-                   %{"value" => "2", "suit" => "hearts", "deck" => 1},
-                   %{"value" => "2", "suit" => "hearts", "deck" => 2}
-                 ],
-                 %{"value" => "2", "suit" => "spades", "deck" => 1}
+                   %{"value" => "2", "suit" => "hearts", "deck" => 1, "order" => 1},
+                   %{"value" => "2", "suit" => "hearts", "deck" => 2, "order" => 2}
+                 ]
                ]
              } = hd(serialized_match_collections)
     end

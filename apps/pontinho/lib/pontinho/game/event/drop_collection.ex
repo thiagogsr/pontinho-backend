@@ -20,6 +20,15 @@ defmodule Pontinho.Event.DropCollection do
     end
   end
 
+  defp validate_match_player(match_player, previous_event) do
+    previous_event.match_player_id == match_player.id
+  end
+
+  defp validate_cards(match_player, cards, taked_card) do
+    match_player_cards = Enum.reject([taked_card | match_player.hand], &is_nil/1)
+    cards -- match_player_cards == []
+  end
+
   defp validate_operation(match, cards, previous_event) do
     cond do
       previous_event.type == "REPLACE_JOKER" && match.joker in cards ->
@@ -34,15 +43,6 @@ defmodule Pontinho.Event.DropCollection do
       true ->
         false
     end
-  end
-
-  defp validate_cards(match_player, cards, taked_card) do
-    match_player_cards = Enum.reject([taked_card | match_player.hand], &is_nil/1)
-    cards -- match_player_cards == []
-  end
-
-  defp validate_match_player(match_player, previous_event) do
-    previous_event.match_player_id == match_player.id
   end
 
   def run(match, match_player, _match_collection, cards, previous_event) do
