@@ -36,7 +36,7 @@ defmodule PontinhoWeb.MatchChannel do
 
     case Pontinho.create_match_event(match, match_player, match_collection, type, cards) do
       {:ok, %{type: "BEAT"} = _match_event} ->
-        broadcast!(socket, "beat", %{})
+        broadcast!(socket, "beat", %{player_name: match_player.player.name})
         {:reply, :ok, socket}
 
       {:ok, _match_event} ->

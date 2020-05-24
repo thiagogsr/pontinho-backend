@@ -13,7 +13,8 @@ defmodule Pontinho.MatchPlayerRepo do
       mp in MatchPlayer,
       where: mp.match_id == ^match_id,
       where: mp.player_id == ^player_id,
-      limit: 1
+      limit: 1,
+      preload: :player
     )
     |> Repo.one!()
   end
