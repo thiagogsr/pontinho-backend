@@ -5,6 +5,8 @@ defmodule Pontinho.Event.Beat do
 
   @behaviour Pontinho.Event
 
+  alias Pontinho.FinishMatch
+
   def validate(_match, match_player, _match_collection, _cards, previous_event) do
     if Enum.empty?(match_player.hand) && previous_event.match_player_id == match_player.id do
       []
@@ -13,6 +15,7 @@ defmodule Pontinho.Event.Beat do
     end
   end
 
-  def run(_match, _match_player, _match_collection, _cards, _previous_event) do
+  def run(match, match_player, _match_collection, _cards, _previous_event) do
+    FinishMatch.run(match, match_player)
   end
 end

@@ -419,13 +419,15 @@ defmodule Pontinho.CreateMatchEventTest do
   describe "BEAT" do
     test "returns ok when match player hand is empty and the previous event was made by the same match player" do
       match = insert(:match)
-      match_player = insert(:match_player, hand: [])
+      match_player = insert(:match_player, match: match, hand: [])
       insert(:match_event, match: match, match_player: match_player)
 
       assert {:ok, %MatchEvent{} = match_event} =
                CreateMatchEvent.run(match, match_player, nil, "BEAT", [])
 
       assert match_event.type == "BEAT"
+      %Match{winner_id: winner_id} = Repo.get(Match, match.id)
+      assert winner_id == match_player.id
     end
 
     test "returns error when match player hand is empty but the previous event was made by other match player" do
@@ -579,7 +581,10 @@ defmodule Pontinho.CreateMatchEventTest do
       match_player =
         insert(:match_player, hand: [%{"value" => "2", "suit" => "clubs", "deck" => 1}])
 
-      random_type = ["DROP_COLLECTION", "BUY", "ACCEPT_FIRST_CARD"] |> Enum.random()
+      random_type =
+        ["DROP_COLLECTION", "ADD_CARD_TO_COLLECTION", "BUY", "ACCEPT_FIRST_CARD"]
+        |> Enum.random()
+
       insert(:match_event, match: match, match_player: match_player, type: random_type)
 
       assert {:ok, %MatchEvent{} = match_event} =
@@ -732,7 +737,8 @@ defmodule Pontinho.CreateMatchEventTest do
         )
 
       random_type =
-        ["BUY", "ASK_BEAT", "DROP_COLLECTION", "ADD_CARD_TO_COLLECTION"] |> Enum.random()
+        ["BUY", "ASK_BEAT", "DROP_COLLECTION", "ADD_CARD_TO_COLLECTION", "ACCEPT_FIRST_CARD"]
+        |> Enum.random()
 
       insert(:match_event, match: match, match_player: match_player, type: random_type)
 
