@@ -80,7 +80,8 @@ defmodule Pontinho.CreateMatchEventTest do
       match_player =
         insert(:match_player,
           hand: [
-            %{"value" => "2", "suit" => "diamonds", "deck" => 1},
+            %{"value" => "A", "suit" => "diamonds", "deck" => 2},
+            %{"value" => "2", "suit" => "diamonds", "deck" => 2},
             %{"value" => "K", "suit" => "hearts", "deck" => 1},
             %{"value" => "K", "suit" => "diamonds", "deck" => 1}
           ]
@@ -108,22 +109,26 @@ defmodule Pontinho.CreateMatchEventTest do
                    %{"value" => "9", "suit" => "hearts", "deck" => 1},
                    %{"value" => "10", "suit" => "hearts", "deck" => 1},
                    %{"value" => "J", "suit" => "hearts", "deck" => 1},
-                   %{"value" => "2", "suit" => "diamonds", "deck" => 1},
+                   %{"value" => "2", "suit" => "diamonds", "deck" => 2},
                    %{"value" => "K", "suit" => "hearts", "deck" => 1}
                  ]
                )
 
       assert match_event.type == "ADD_CARD_TO_COLLECTION"
 
-      assert %MatchPlayer{hand: [%{"value" => "K", "suit" => "diamonds", "deck" => 1}]} =
-               Repo.get(MatchPlayer, match_player.id)
+      assert %MatchPlayer{
+               hand: [
+                 %{"value" => "A", "suit" => "diamonds", "deck" => 2},
+                 %{"value" => "K", "suit" => "diamonds", "deck" => 1}
+               ]
+             } = Repo.get(MatchPlayer, match_player.id)
 
       assert %MatchCollection{
                cards: [
                  %{"value" => "9", "suit" => "hearts", "deck" => 1},
                  %{"value" => "10", "suit" => "hearts", "deck" => 1},
                  %{"value" => "J", "suit" => "hearts", "deck" => 1},
-                 %{"value" => "2", "suit" => "diamonds", "deck" => 1},
+                 %{"value" => "2", "suit" => "diamonds", "deck" => 2},
                  %{"value" => "K", "suit" => "hearts", "deck" => 1}
                ]
              } = Repo.get(MatchCollection, match_collection.id)
@@ -245,6 +250,48 @@ defmodule Pontinho.CreateMatchEventTest do
              } = Repo.get(MatchCollection, match_collection.id)
     end
 
+    test "returns error when the match player hand will have only one card" do
+      match = insert(:match, joker: %{"value" => "2", "suit" => "diamonds", "deck" => 1})
+
+      match_player =
+        insert(:match_player,
+          hand: [
+            %{"value" => "2", "suit" => "diamonds", "deck" => 2},
+            %{"value" => "K", "suit" => "hearts", "deck" => 1},
+            %{"value" => "K", "suit" => "diamonds", "deck" => 1}
+          ]
+        )
+
+      match_collection =
+        insert(:match_collection,
+          match: match,
+          cards: [
+            %{"value" => "9", "suit" => "hearts", "deck" => 1},
+            %{"value" => "10", "suit" => "hearts", "deck" => 1},
+            %{"value" => "J", "suit" => "hearts", "deck" => 1}
+          ]
+        )
+
+      insert(:match_event, match: match, match_player: match_player, type: "REPLACE_JOKER")
+
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               CreateMatchEvent.run(
+                 match,
+                 match_player,
+                 match_collection,
+                 "ADD_CARD_TO_COLLECTION",
+                 [
+                   %{"value" => "9", "suit" => "hearts", "deck" => 1},
+                   %{"value" => "10", "suit" => "hearts", "deck" => 1},
+                   %{"value" => "J", "suit" => "hearts", "deck" => 1},
+                   %{"value" => "2", "suit" => "diamonds", "deck" => 2},
+                   %{"value" => "K", "suit" => "hearts", "deck" => 1}
+                 ]
+               )
+
+      assert %{cards: ["invalid operation"]} = errors_on(changeset)
+    end
+
     test "returns error when the previous event is REPLACE_JOKER but joker is not present in this collection" do
       match = insert(:match, joker: %{"value" => "2", "suit" => "diamonds", "deck" => 1})
 
@@ -288,13 +335,14 @@ defmodule Pontinho.CreateMatchEventTest do
     end
 
     test "returns error when the collection is invalid" do
-      match = insert(:match)
+      match = insert(:match, joker: %{"value" => "10", "suit" => "diamonds", "deck" => 1})
 
       match_player =
         insert(:match_player,
           hand: [
+            %{"value" => "A", "suit" => "hearts", "deck" => 1},
             %{"value" => "2", "suit" => "diamonds", "deck" => 2},
-            %{"value" => "K", "suit" => "hearts", "deck" => 1},
+            %{"value" => "K", "suit" => "hearts", "deck" => 2},
             %{"value" => "K", "suit" => "diamonds", "deck" => 1}
           ]
         )
@@ -326,7 +374,7 @@ defmodule Pontinho.CreateMatchEventTest do
                  ]
                )
 
-      assert %{cards: ["invalid trio"]} = errors_on(changeset)
+      assert %{cards: ["invalid sequence"]} = errors_on(changeset)
     end
 
     test "returns error when the previous event was made by other match player" do
@@ -751,6 +799,35 @@ defmodule Pontinho.CreateMatchEventTest do
 
       assert match_event.type == "DROP_COLLECTION"
       assert %MatchPlayer{hand: []} = Repo.get(MatchPlayer, match_player.id)
+    end
+
+    test "returns error when match player hand will have only one card" do
+      match = insert(:match)
+
+      match_player =
+        insert(:match_player,
+          hand: [
+            %{"value" => "2", "suit" => "clubs", "deck" => 1},
+            %{"value" => "3", "suit" => "clubs", "deck" => 1},
+            %{"value" => "4", "suit" => "clubs", "deck" => 1},
+            %{"value" => "4", "suit" => "clubs", "deck" => 2}
+          ]
+        )
+
+      random_type =
+        ["BUY", "ASK_BEAT", "DROP_COLLECTION", "ADD_CARD_TO_COLLECTION", "ACCEPT_FIRST_CARD"]
+        |> Enum.random()
+
+      insert(:match_event, match: match, match_player: match_player, type: random_type)
+
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               CreateMatchEvent.run(match, match_player, nil, "DROP_COLLECTION", [
+                 %{"value" => "2", "suit" => "clubs", "deck" => 1},
+                 %{"value" => "3", "suit" => "clubs", "deck" => 1},
+                 %{"value" => "4", "suit" => "clubs", "deck" => 1}
+               ])
+
+      assert %{cards: ["invalid operation"]} = errors_on(changeset)
     end
 
     test "returns error when previous event type is REPLACE_JOKER and joker is not in the dropped cards" do

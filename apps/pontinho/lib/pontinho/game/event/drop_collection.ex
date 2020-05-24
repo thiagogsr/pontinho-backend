@@ -10,7 +10,8 @@ defmodule Pontinho.Event.DropCollection do
   def validate(match, match_player, _match_collection, cards, previous_event) do
     if validate_match_player(match_player, previous_event) &&
          validate_cards(match_player, cards, previous_event.taked_card) &&
-         validate_operation(match, cards, previous_event) do
+         validate_operation(match, cards, previous_event) &&
+         validate_match_player_hand(match_player.hand, cards) do
       case Collection.validate(cards, match.joker, previous_event.type == "ASK_BEAT") do
         {:ok, _} -> []
         {:error, error} -> [error]
@@ -31,7 +32,7 @@ defmodule Pontinho.Event.DropCollection do
 
   defp validate_operation(match, cards, previous_event) do
     cond do
-      previous_event.type == "REPLACE_JOKER" && match.joker in cards ->
+      previous_event.type == "REPLACE_JOKER" && Deck.member?(cards, match.joker) ->
         true
 
       previous_event.type == "TAKE_DISCARD_PILE" && previous_event.taked_card in cards ->
@@ -48,6 +49,13 @@ defmodule Pontinho.Event.DropCollection do
 
       true ->
         false
+    end
+  end
+
+  defp validate_match_player_hand(match_player_hand, cards) do
+    case Deck.remove_cards(match_player_hand, cards) do
+      c when length(c) == 1 -> false
+      _ -> true
     end
   end
 
