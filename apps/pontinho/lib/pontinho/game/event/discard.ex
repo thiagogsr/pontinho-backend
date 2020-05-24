@@ -16,7 +16,12 @@ defmodule Pontinho.Event.Discard do
 
       !is_nil(previous_event) && previous_event.match_player_id == match_player.id &&
         card in match_player.hand &&
-          previous_event.type in ["DROP_COLLECTION", "BUY", "ACCEPT_FIRST_CARD"] ->
+          previous_event.type in [
+            "DROP_COLLECTION",
+            "ADD_CARD_TO_COLLECTION",
+            "BUY",
+            "ACCEPT_FIRST_CARD"
+          ] ->
         []
 
       true ->
