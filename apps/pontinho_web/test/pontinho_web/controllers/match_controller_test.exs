@@ -1,6 +1,6 @@
 defmodule PontinhoWeb.MatchControllerTest do
   use PontinhoWeb.ConnCase, async: true
-  use Phoenix.ChannelTest
+  import Phoenix.ChannelTest
 
   import Pontinho.Factory
 

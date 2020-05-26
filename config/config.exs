@@ -25,7 +25,7 @@ config :pontinho_web, PontinhoWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "bGsPqTLDlmSYVdY1KEwBF3uumEV5SzcSjgYtrdzMJ3P+iyH6OJ8PMjVofVRul+B4",
   render_errors: [view: PontinhoWeb.ErrorView, accepts: ~w(json)],
-  pubsub: [name: PontinhoWeb.PubSub, adapter: Phoenix.PubSub.PG2],
+  pubsub_server: PontinhoWeb.PubSub,
   live_view: [signing_salt: "T+0UVMpl"]
 
 # Configures Elixir's Logger
