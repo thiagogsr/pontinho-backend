@@ -45,4 +45,21 @@ defmodule PontinhoWeb.Endpoint do
   plug CORSPlug
 
   plug PontinhoWeb.Router
+
+  def init(_key, config) do
+    if config[:load_from_system_env] do
+      port = System.get_env("PORT", "4000")
+
+      case Integer.parse(port) do
+        {_int, ""} ->
+          config = put_in(config[:http][:port], port)
+          {:ok, config}
+
+        :error ->
+          {:ok, config}
+      end
+    else
+      {:ok, config}
+    end
+  end
 end

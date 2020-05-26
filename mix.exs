@@ -4,8 +4,10 @@ defmodule Pontinho.Umbrella.MixProject do
   def project do
     [
       apps_path: "apps",
+      version: "0.1.0",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      releases: releases()
     ]
   end
 
@@ -24,6 +26,15 @@ defmodule Pontinho.Umbrella.MixProject do
   defp deps do
     [
       {:credo, "~> 1.3", only: [:dev, :test], runtime: false}
+    ]
+  end
+
+  defp releases do
+    [
+      web: [
+        include_executables_for: [:unix],
+        applications: [pontinho_web: :permanent]
+      ]
     ]
   end
 end

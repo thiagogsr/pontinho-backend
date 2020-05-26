@@ -10,8 +10,13 @@ use Mix.Config
 # which you should run after static files are built and
 # before starting your production server.
 config :pontinho_web, PontinhoWeb.Endpoint,
-  url: [host: "example.com", port: 80],
-  cache_static_manifest: "priv/static/cache_manifest.json"
+  load_from_system_env: true,
+  server: true,
+  url: [scheme: "https", port: 443],
+  http: [compress: true, transport_options: [socket_opts: [:inet6]]],
+  force_ssl: [rewrite_on: [:x_forwarded_proto]]
+
+config :pontinho, Pontinho.Repo, ssl: true
 
 # ## SSL Support
 #
@@ -49,7 +54,3 @@ config :pontinho_web, PontinhoWeb.Endpoint,
 
 # Do not print debug messages in production
 config :logger, level: :info
-
-# Finally import the config/prod.secret.exs which loads secrets
-# and configuration from environment variables.
-import_config "prod.secret.exs"
