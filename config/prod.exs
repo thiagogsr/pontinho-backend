@@ -14,7 +14,7 @@ config :pontinho_web, PontinhoWeb.Endpoint,
   server: true,
   url: [scheme: "https", port: 443],
   http: [compress: true, transport_options: [socket_opts: [:inet6]]],
-  force_ssl: [rewrite_on: [:x_forwarded_proto]]
+  force_ssl: [rewrite_on: [:x_forwarded_proto], host: nil]
 
 config :pontinho, Pontinho.Repo, ssl: true
 

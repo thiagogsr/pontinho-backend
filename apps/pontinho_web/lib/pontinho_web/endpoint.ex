@@ -42,7 +42,7 @@ defmodule PontinhoWeb.Endpoint do
   plug Plug.Head
   plug Plug.Session, @session_options
 
-  plug CORSPlug, origin: ["http://localhost:3000", ~r/https?.*pontinhonline\d?\.com\.br$/]
+  plug CORSPlug, origin: ["http://localhost:3000", ~r/https?.*pontinhonline\.com\.br$/]
 
   plug PontinhoWeb.Router
 
