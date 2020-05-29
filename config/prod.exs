@@ -13,8 +13,7 @@ config :pontinho_web, PontinhoWeb.Endpoint,
   load_from_system_env: true,
   server: true,
   url: [scheme: "https", port: 443],
-  http: [compress: true, transport_options: [socket_opts: [:inet6]]],
-  force_ssl: [rewrite_on: [:x_forwarded_proto], host: nil]
+  http: [compress: true, transport_options: [socket_opts: [:inet6]]]
 
 config :pontinho, Pontinho.Repo, ssl: true
 
