@@ -24,6 +24,7 @@ defmodule Pontinho.Event.AddCardToCollection do
     previous_event.match_player_id == match_player.id
   end
 
+  # permitir quando as duas forem coladas
   defp validate_match_player_hand(match_player_hand, cards) do
     case Deck.remove_cards(match_player_hand, cards) do
       c when length(c) == 1 -> false
@@ -33,9 +34,14 @@ defmodule Pontinho.Event.AddCardToCollection do
 
   defp validate_operation(previous_event, match, cards) do
     cond do
-      previous_event.type == "REPLACE_JOKER" && Deck.member?(cards, match.joker) -> true
-      previous_event.type in ["BUY", "ASK_BEAT"] -> true
-      true -> false
+      previous_event.type == "REPLACE_JOKER" && Deck.member?(cards, match.joker) ->
+        true
+
+      previous_event.type in ["BUY", "ASK_BEAT", "ADD_CARD_TO_COLLECTION", "DROP_COLLECTION"] ->
+        true
+
+      true ->
+        false
     end
   end
 

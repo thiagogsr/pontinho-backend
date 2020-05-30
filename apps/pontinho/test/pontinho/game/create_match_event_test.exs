@@ -134,7 +134,7 @@ defmodule Pontinho.CreateMatchEventTest do
              } = Repo.get(MatchCollection, match_collection.id)
     end
 
-    test "returns ok when previous event was BUY" do
+    test "returns ok when previous event was valid" do
       match = insert(:match)
 
       match_player =
@@ -157,65 +157,11 @@ defmodule Pontinho.CreateMatchEventTest do
           ]
         )
 
-      insert(:match_event, match: match, match_player: match_player, type: "BUY")
+      random_type =
+        ["DROP_COLLECTION", "ADD_CARD_TO_COLLECTION", "BUY", "ASK_BEAT"]
+        |> Enum.random()
 
-      assert {:ok, %MatchEvent{} = match_event} =
-               CreateMatchEvent.run(
-                 match,
-                 match_player,
-                 match_collection,
-                 "ADD_CARD_TO_COLLECTION",
-                 [
-                   %{"value" => "K", "suit" => "hearts", "deck" => 1},
-                   %{"value" => "K", "suit" => "suits", "deck" => 1},
-                   %{"value" => "K", "suit" => "clubs", "deck" => 1},
-                   %{"value" => "K", "suit" => "hearts", "deck" => 1}
-                 ]
-               )
-
-      assert match_event.type == "ADD_CARD_TO_COLLECTION"
-
-      assert %MatchPlayer{
-               hand: [
-                 %{"value" => "2", "suit" => "diamonds", "deck" => 1},
-                 %{"value" => "K", "suit" => "diamonds", "deck" => 1}
-               ]
-             } = Repo.get(MatchPlayer, match_player.id)
-
-      assert %MatchCollection{
-               cards: [
-                 %{"value" => "K", "suit" => "hearts", "deck" => 1},
-                 %{"value" => "K", "suit" => "suits", "deck" => 1},
-                 %{"value" => "K", "suit" => "clubs", "deck" => 1},
-                 %{"value" => "K", "suit" => "hearts", "deck" => 1}
-               ]
-             } = Repo.get(MatchCollection, match_collection.id)
-    end
-
-    test "returns ok when previous event was ASK_BEAT" do
-      match = insert(:match)
-
-      match_player =
-        insert(:match_player,
-          hand: [
-            %{"value" => "2", "suit" => "diamonds", "deck" => 1},
-            %{"value" => "K", "suit" => "hearts", "deck" => 1},
-            %{"value" => "K", "suit" => "diamonds", "deck" => 1}
-          ]
-        )
-
-      match_collection =
-        insert(:match_collection,
-          match: match,
-          type: "trio",
-          cards: [
-            %{"value" => "K", "suit" => "hearts", "deck" => 1},
-            %{"value" => "K", "suit" => "suits", "deck" => 1},
-            %{"value" => "K", "suit" => "clubs", "deck" => 1}
-          ]
-        )
-
-      insert(:match_event, match: match, match_player: match_player, type: "ASK_BEAT")
+      insert(:match_event, match: match, match_player: match_player, type: random_type)
 
       assert {:ok, %MatchEvent{} = match_event} =
                CreateMatchEvent.run(
