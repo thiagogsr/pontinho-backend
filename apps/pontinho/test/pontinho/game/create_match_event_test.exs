@@ -196,6 +196,58 @@ defmodule Pontinho.CreateMatchEventTest do
              } = Repo.get(MatchCollection, match_collection.id)
     end
 
+    test "returns ok when the match player hand will have only one card but previous event is ASK_BEAT" do
+      match = insert(:match)
+
+      match_player =
+        insert(:match_player,
+          hand: [
+            %{"value" => "2", "suit" => "diamonds", "deck" => 2},
+            %{"value" => "Q", "suit" => "hearts", "deck" => 1}
+          ]
+        )
+
+      match_collection =
+        insert(:match_collection,
+          match: match,
+          cards: [
+            %{"value" => "9", "suit" => "hearts", "deck" => 1},
+            %{"value" => "10", "suit" => "hearts", "deck" => 1},
+            %{"value" => "J", "suit" => "hearts", "deck" => 1}
+          ]
+        )
+
+      insert(:match_event, match: match, match_player: match_player, type: "ASK_BEAT")
+
+      assert {:ok, %MatchEvent{} = match_event} =
+               CreateMatchEvent.run(
+                 match,
+                 match_player,
+                 match_collection,
+                 "ADD_CARD_TO_COLLECTION",
+                 [
+                   %{"value" => "9", "suit" => "hearts", "deck" => 1},
+                   %{"value" => "10", "suit" => "hearts", "deck" => 1},
+                   %{"value" => "J", "suit" => "hearts", "deck" => 1},
+                   %{"value" => "Q", "suit" => "hearts", "deck" => 1}
+                 ]
+               )
+
+      assert match_event.type == "ADD_CARD_TO_COLLECTION"
+
+      assert %MatchPlayer{hand: [%{"value" => "2", "suit" => "diamonds", "deck" => 2}]} =
+               Repo.get(MatchPlayer, match_player.id)
+
+      assert %MatchCollection{
+               cards: [
+                 %{"value" => "9", "suit" => "hearts", "deck" => 1},
+                 %{"value" => "10", "suit" => "hearts", "deck" => 1},
+                 %{"value" => "J", "suit" => "hearts", "deck" => 1},
+                 %{"value" => "Q", "suit" => "hearts", "deck" => 1}
+               ]
+             } = Repo.get(MatchCollection, match_collection.id)
+    end
+
     test "returns error when the match player hand will have only one card" do
       match = insert(:match, joker: %{"value" => "2", "suit" => "diamonds", "deck" => 1})
 
@@ -747,6 +799,34 @@ defmodule Pontinho.CreateMatchEventTest do
       assert %MatchPlayer{hand: []} = Repo.get(MatchPlayer, match_player.id)
     end
 
+    test "returns ok when match player hand will have only one card but the previous event is ASK_BEAT" do
+      match = insert(:match)
+
+      match_player =
+        insert(:match_player,
+          hand: [
+            %{"value" => "2", "suit" => "clubs", "deck" => 1},
+            %{"value" => "3", "suit" => "clubs", "deck" => 1},
+            %{"value" => "4", "suit" => "clubs", "deck" => 1},
+            %{"value" => "4", "suit" => "clubs", "deck" => 2}
+          ]
+        )
+
+      insert(:match_event, match: match, match_player: match_player, type: "ASK_BEAT")
+
+      assert {:ok, %MatchEvent{} = match_event} =
+               CreateMatchEvent.run(match, match_player, nil, "DROP_COLLECTION", [
+                 %{"value" => "2", "suit" => "clubs", "deck" => 1},
+                 %{"value" => "3", "suit" => "clubs", "deck" => 1},
+                 %{"value" => "4", "suit" => "clubs", "deck" => 1}
+               ])
+
+      assert match_event.type == "DROP_COLLECTION"
+
+      assert %MatchPlayer{hand: [%{"value" => "4", "suit" => "clubs", "deck" => 2}]} =
+               Repo.get(MatchPlayer, match_player.id)
+    end
+
     test "returns error when match player hand will have only one card" do
       match = insert(:match)
 
@@ -761,7 +841,7 @@ defmodule Pontinho.CreateMatchEventTest do
         )
 
       random_type =
-        ["BUY", "ASK_BEAT", "DROP_COLLECTION", "ADD_CARD_TO_COLLECTION", "ACCEPT_FIRST_CARD"]
+        ["BUY", "DROP_COLLECTION", "ADD_CARD_TO_COLLECTION", "ACCEPT_FIRST_CARD"]
         |> Enum.random()
 
       insert(:match_event, match: match, match_player: match_player, type: random_type)
