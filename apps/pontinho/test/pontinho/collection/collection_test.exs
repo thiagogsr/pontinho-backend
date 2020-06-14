@@ -146,6 +146,19 @@ defmodule Pontinho.CollectionTest do
       assert {:ok, %{type: "trio"}} = Collection.validate(cards, joker, beat)
     end
 
+    test "returns ok then it is a trio with joker acting as a regular card" do
+      cards = [
+        %{"value" => "3", "suit" => "hearts", "deck" => 1},
+        %{"value" => "3", "suit" => "spades", "deck" => 1},
+        %{"value" => "3", "suit" => "diamonds", "deck" => 1}
+      ]
+
+      joker = %{"value" => "3", "suit" => "hearts", "deck" => 1}
+      beat = false
+
+      assert {:ok, %{type: "trio"}} = Collection.validate(cards, joker, beat)
+    end
+
     test "returns ok then it is a trio without a joker and four cards" do
       cards = [
         %{"value" => "3", "suit" => "hearts", "deck" => 1},
@@ -168,6 +181,19 @@ defmodule Pontinho.CollectionTest do
       ]
 
       joker = %{"value" => "K", "suit" => "spades", "deck" => 2}
+      beat = true
+
+      assert {:ok, %{type: "trio"}} = Collection.validate(cards, joker, beat)
+    end
+
+    test "returns ok then it is a trio with a joker acting as a regular card and player beats" do
+      cards = [
+        %{"value" => "3", "suit" => "hearts", "deck" => 1},
+        %{"value" => "3", "suit" => "spades", "deck" => 1},
+        %{"value" => "3", "suit" => "diamonds", "deck" => 1}
+      ]
+
+      joker = %{"value" => "3", "suit" => "spades", "deck" => 2}
       beat = true
 
       assert {:ok, %{type: "trio"}} = Collection.validate(cards, joker, beat)
@@ -198,6 +224,19 @@ defmodule Pontinho.CollectionTest do
       beat = true
 
       assert {:ok, %{type: "trio"}} = Collection.validate(cards, joker, beat)
+    end
+
+    test "returns error when there are duplicated cards for a trio with joker and player does not beat" do
+      cards = [
+        %{"value" => "3", "suit" => "spades", "deck" => 1},
+        %{"value" => "3", "suit" => "spades", "deck" => 1},
+        %{"value" => "3", "suit" => "diamonds", "deck" => 1}
+      ]
+
+      joker = %{"value" => "3", "suit" => "spades", "deck" => 1}
+      beat = false
+
+      assert {:error, "invalid trio"} = Collection.validate(cards, joker, beat)
     end
 
     test "returns error when it is a trio with duplicated cards" do

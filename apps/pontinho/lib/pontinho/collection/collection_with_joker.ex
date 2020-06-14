@@ -8,7 +8,7 @@ defmodule Pontinho.CollectionWithJoker do
 
   def validate(cards, values, suits, joker, beat) do
     case values |> Enum.uniq() |> length() do
-      length when length in [1, 2] -> validate_trio(suits, beat)
+      values_length when values_length in [1, 2] -> validate_trio(values_length, suits, beat)
       _ -> validate_sequence(cards, joker, beat)
     end
   end
@@ -33,14 +33,21 @@ defmodule Pontinho.CollectionWithJoker do
     end
   end
 
-  defp validate_trio(suits, true = _beat) do
+  defp validate_trio(values_length, _suits, false = _beat) when values_length == 2 do
+    {:error, "invalid trio"}
+  end
+
+  defp validate_trio(_values_length, suits, true = _beat) do
     case suits |> Enum.uniq() |> length() do
-      1 -> {:error, "invalid trio"}
-      _ -> {:ok, %{type: "trio"}}
+      suits_length when suits_length in [2, 3] -> {:ok, %{type: "trio"}}
+      _ -> {:error, "invalid trio"}
     end
   end
 
-  defp validate_trio(_suits, false = _beat) do
-    {:error, "invalid trio"}
+  defp validate_trio(_values_length, suits, false = _beat) do
+    case suits |> Enum.uniq() |> length() do
+      3 -> {:ok, %{type: "trio"}}
+      _ -> {:error, "invalid trio"}
+    end
   end
 end
