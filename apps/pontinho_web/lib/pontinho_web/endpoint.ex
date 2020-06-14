@@ -11,7 +11,7 @@ defmodule PontinhoWeb.Endpoint do
   ]
 
   socket "/socket", PontinhoWeb.PlayerSocket,
-    websocket: [check_origin: ["//*.pontinhonline.com.br"]],
+    websocket: [check_origin: ["//localhost", "//*.pontinhonline.com.br"]],
     longpoll: false
 
   # Serve at "/" the static files from "priv/static" directory.
