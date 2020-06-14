@@ -134,6 +134,70 @@ defmodule Pontinho.CreateMatchEventTest do
              } = Repo.get(MatchCollection, match_collection.id)
     end
 
+    test "returns ok when previous event was TAKE_DISCARD_PILE" do
+      match = insert(:match)
+
+      match_player =
+        insert(:match_player,
+          hand: [
+            %{"value" => "A", "suit" => "diamonds", "deck" => 2},
+            %{"value" => "K", "suit" => "diamonds", "deck" => 1},
+            %{"value" => "8", "suit" => "hearts", "deck" => 1}
+          ]
+        )
+
+      match_collection =
+        insert(:match_collection,
+          match: match,
+          cards: [
+            %{"value" => "9", "suit" => "hearts", "deck" => 1},
+            %{"value" => "10", "suit" => "hearts", "deck" => 1},
+            %{"value" => "J", "suit" => "hearts", "deck" => 1}
+          ]
+        )
+
+      insert(:match_event,
+        match: match,
+        match_player: match_player,
+        type: "TAKE_DISCARD_PILE",
+        taked_card: %{"value" => "7", "suit" => "hearts", "deck" => 1}
+      )
+
+      assert {:ok, %MatchEvent{} = match_event} =
+               CreateMatchEvent.run(
+                 match,
+                 match_player,
+                 match_collection,
+                 "ADD_CARD_TO_COLLECTION",
+                 [
+                   %{"value" => "7", "suit" => "hearts", "deck" => 1},
+                   %{"value" => "8", "suit" => "hearts", "deck" => 1},
+                   %{"value" => "9", "suit" => "hearts", "deck" => 1},
+                   %{"value" => "10", "suit" => "hearts", "deck" => 1},
+                   %{"value" => "J", "suit" => "hearts", "deck" => 1}
+                 ]
+               )
+
+      assert match_event.type == "ADD_CARD_TO_COLLECTION"
+
+      assert %MatchPlayer{
+               hand: [
+                 %{"value" => "A", "suit" => "diamonds", "deck" => 2},
+                 %{"value" => "K", "suit" => "diamonds", "deck" => 1}
+               ]
+             } = Repo.get(MatchPlayer, match_player.id)
+
+      assert %MatchCollection{
+               cards: [
+                 %{"value" => "7", "suit" => "hearts", "deck" => 1},
+                 %{"value" => "8", "suit" => "hearts", "deck" => 1},
+                 %{"value" => "9", "suit" => "hearts", "deck" => 1},
+                 %{"value" => "10", "suit" => "hearts", "deck" => 1},
+                 %{"value" => "J", "suit" => "hearts", "deck" => 1}
+               ]
+             } = Repo.get(MatchCollection, match_collection.id)
+    end
+
     test "returns ok when previous event was valid" do
       match = insert(:match)
 
