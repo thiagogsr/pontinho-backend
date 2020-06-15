@@ -42,6 +42,19 @@ defmodule Pontinho.CollectionTest do
       assert {:ok, %{type: "sequence"}} = Collection.validate(cards, joker, beat)
     end
 
+    test "returns ok when it is a sequence with a joker in the corner acting as a regular card" do
+      cards = [
+        %{"value" => "A", "suit" => "hearts", "deck" => 1},
+        %{"value" => "2", "suit" => "hearts", "deck" => 1},
+        %{"value" => "3", "suit" => "hearts", "deck" => 1}
+      ]
+
+      joker = %{"value" => "A", "suit" => "hearts", "deck" => 1}
+      beat = false
+
+      assert {:ok, %{type: "sequence"}} = Collection.validate(cards, joker, beat)
+    end
+
     test "returns ok when it is a sequence with a joker in the corner and player beats" do
       cards = [
         %{"value" => "A", "suit" => "hearts", "deck" => 1},

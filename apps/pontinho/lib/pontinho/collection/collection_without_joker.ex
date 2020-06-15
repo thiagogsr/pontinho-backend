@@ -14,7 +14,7 @@ defmodule Pontinho.CollectionWithoutJoker do
 
   defp validate_sequence(cards) do
     case ValidateSequence.run(cards) do
-      :ok -> {:ok, %{type: "sequence"}}
+      :ok_without_joker -> {:ok, %{type: "sequence"}}
       :error -> {:error, "invalid sequence"}
     end
   end

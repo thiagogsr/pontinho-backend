@@ -17,11 +17,17 @@ defmodule Pontinho.CollectionWithJoker do
     first_card = List.first(cards)
     last_card = List.last(cards)
 
-    with :ok <- validate_sequence_joker(first_card, last_card, joker, beat) do
-      case ValidateSequence.run(cards, joker) do
-        :ok -> {:ok, %{type: "sequence"}}
-        :error -> {:error, "invalid sequence"}
-      end
+    case ValidateSequence.run(cards, joker) do
+      :ok_with_joker ->
+        with :ok <- validate_sequence_joker(first_card, last_card, joker, beat) do
+          {:ok, %{type: "sequence"}}
+        end
+
+      :ok_without_joker ->
+        {:ok, %{type: "sequence"}}
+
+      _ ->
+        {:error, "invalid sequence"}
     end
   end
 

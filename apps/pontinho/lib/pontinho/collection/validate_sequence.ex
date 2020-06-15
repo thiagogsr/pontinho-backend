@@ -9,14 +9,15 @@ defmodule Pontinho.Collection.ValidateSequence do
   @ace_index Deck.value_index("A")
   @king_index Deck.value_index("K")
 
-  @spec run(list(map), map | nil) :: :ok | :error
+  @spec run(list(map), map | nil) :: :ok_with_joker | :ok_without_joker | :error
   def run(cards, joker \\ nil) do
     [first_card | tail_cards] = Enum.map(cards, &convert_card/1)
     joker_card = convert_card(joker)
 
     case validate(first_card, tail_cards, joker_card) do
       :error -> :error
-      _ -> :ok
+      %{with_joker: true} -> :ok_with_joker
+      %{with_joker: false} -> :ok_without_joker
     end
   end
 
@@ -29,12 +30,15 @@ defmodule Pontinho.Collection.ValidateSequence do
   defp validate(first_card, tail_cards, joker) do
     {first_index, _} = first_card
 
-    Enum.reduce_while(tail_cards, first_card, fn {index, suit} = card, {past_index, _} ->
+    Enum.reduce_while(tail_cards, %{card: first_card, with_joker: false}, fn card, acc ->
+      {index, suit} = card
+      %{card: {past_index, _}, with_joker: with_joker} = acc
+
       cond do
         king_ace_two?(index, past_index, first_index) -> {:halt, :error}
-        ace_after_king?(index, past_index) -> {:cont, card}
-        greater_index?(index, past_index) -> {:cont, card}
-        joker?(card, joker) -> {:cont, {past_index + 1, suit}}
+        ace_after_king?(index, past_index) -> {:cont, %{card: card, with_joker: with_joker}}
+        greater_index?(index, past_index) -> {:cont, %{card: card, with_joker: with_joker}}
+        joker?(card, joker) -> {:cont, %{card: {past_index + 1, suit}, with_joker: true}}
         true -> {:halt, :error}
       end
     end)
