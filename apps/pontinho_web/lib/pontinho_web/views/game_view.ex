@@ -15,6 +15,7 @@ defmodule PontinhoWeb.GameView do
     %{
       game_id: game.id,
       betting_table: game.betting_table,
+      winner_id: game.winner_id,
       players: Enum.map(players, &player_json/1),
       matches: Enum.map(matches, &match_json/1)
     }
@@ -25,7 +26,8 @@ defmodule PontinhoWeb.GameView do
       id: player.id,
       name: player.name,
       points: player.points,
-      playing: player.playing
+      playing: player.playing,
+      balance: player.balance
     }
   end
 
