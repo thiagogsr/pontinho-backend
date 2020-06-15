@@ -11,7 +11,7 @@ defmodule Pontinho.Event.Discard do
     [card] = cards
 
     cond do
-      match.joker == card ->
+      Deck.member?([card], match.joker) ->
         ["you cannot discard the joker"]
 
       !is_nil(previous_event) && previous_event.match_player_id == match_player.id &&

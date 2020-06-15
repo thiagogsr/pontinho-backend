@@ -765,7 +765,7 @@ defmodule Pontinho.CreateMatchEventTest do
       match = insert(:match, joker: %{"value" => "10", "suit" => "clubs", "deck" => 1})
 
       match_player =
-        insert(:match_player, hand: [%{"value" => "10", "suit" => "clubs", "deck" => 1}])
+        insert(:match_player, hand: [%{"value" => "10", "suit" => "clubs", "deck" => 2}])
 
       random_type = ["DROP_COLLECTION", "BUY", "ACCEPT_FIRST_CARD"] |> Enum.random()
       insert(:match_event, match: match, match_player: match_player, type: random_type)
