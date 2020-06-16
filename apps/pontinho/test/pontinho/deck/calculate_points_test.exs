@@ -4,7 +4,7 @@ defmodule Pontinho.CalculatePointsTest do
   alias Pontinho.CalculatePoints
 
   setup do
-    %{joker: %{"value" => "2", "suit" => "clubs"}}
+    %{joker: %{"value" => "2", "suit" => "clubs", "deck" => 1}}
   end
 
   test "returns 0 when cards is empty", %{joker: joker} do
@@ -12,7 +12,7 @@ defmodule Pontinho.CalculatePointsTest do
   end
 
   test "returns 20 when joker is present", %{joker: joker} do
-    assert CalculatePoints.run([%{"value" => "2", "suit" => "clubs"}], joker) == 20
+    assert CalculatePoints.run([%{"value" => "2", "suit" => "clubs", "deck" => 2}], joker) == 20
   end
 
   test "returns 10 when card is J, Q or K", %{joker: joker} do

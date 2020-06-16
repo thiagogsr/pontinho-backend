@@ -8,14 +8,12 @@ defmodule Pontinho.CalculatePoints do
     Enum.reduce(cards, 0, &calculate(&1, &2, joker))
   end
 
-  defp calculate(card, points, joker) when card == joker, do: points + 20
-  defp calculate(%{"value" => "A", "suit" => _}, points, _), do: points + 15
-
-  defp calculate(%{"value" => value, "suit" => _}, points, _) when value in ["J", "Q", "K"] do
-    points + 10
-  end
-
-  defp calculate(%{"value" => value, "suit" => _}, points, _) do
-    points + String.to_integer(value)
+  defp calculate(card, points, joker) do
+    cond do
+      card["value"] == joker["value"] && card["suit"] == joker["suit"] -> points + 20
+      card["value"] == "A" -> points + 15
+      card["value"] in ["J", "Q", "K"] -> points + 10
+      true -> points + String.to_integer(card["value"])
+    end
   end
 end
