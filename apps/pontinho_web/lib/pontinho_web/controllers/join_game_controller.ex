@@ -1,7 +1,7 @@
 defmodule PontinhoWeb.JoinGameController do
   use PontinhoWeb, :controller
 
-  alias PontinhoWeb.{Endpoint, GameView}
+  alias PontinhoWeb.{Endpoint, GameView, PlayerSerializer}
 
   action_fallback PontinhoWeb.FallbackController
 
@@ -11,22 +11,14 @@ defmodule PontinhoWeb.JoinGameController do
     with {:ok, player} <- Pontinho.join_game(game, params["name"]) do
       players = Pontinho.list_players(game)
       matches = Pontinho.list_game_matches(game)
-      Endpoint.broadcast("game:#{game.id}", "player_joined", %{players: players_json(players)})
+
+      Endpoint.broadcast("game:#{game.id}", "player_joined", %{
+        players: Enum.map(players, &PlayerSerializer.serialize/1)
+      })
 
       conn
       |> put_view(GameView)
       |> render("game.json", %{game: game, player: player, players: players, matches: matches})
     end
-  end
-
-  defp players_json(players) do
-    Enum.map(players, fn player ->
-      %{
-        id: player.id,
-        name: player.name,
-        points: player.points,
-        playing: player.playing
-      }
-    end)
   end
 end
