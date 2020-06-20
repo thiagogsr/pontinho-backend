@@ -61,16 +61,18 @@ defmodule Pontinho.CollectionWithJoker do
   end
 
   defp validate_trio(cards_values_length, cards_suits_length, true = _beat) do
-    cond do
-      cards_values_length in [1, 2] && cards_suits_length in [2, 3] -> {:ok, %{type: "trio"}}
-      true -> {:error, "invalid trio"}
+    if cards_values_length in [1, 2] && cards_suits_length in [2, 3] do
+      {:ok, %{type: "trio"}}
+    else
+      {:error, "invalid trio"}
     end
   end
 
   defp validate_trio(cards_values_length, cards_suits_length, false = _beat) do
-    cond do
-      cards_values_length == 1 && cards_suits_length == 3 -> {:ok, %{type: "trio"}}
-      true -> {:error, "invalid trio"}
+    if cards_values_length == 1 && cards_suits_length == 3 do
+      {:ok, %{type: "trio"}}
+    else
+      {:error, "invalid trio"}
     end
   end
 end
