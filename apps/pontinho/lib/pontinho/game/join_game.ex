@@ -11,12 +11,14 @@ defmodule Pontinho.JoinGame do
   @default_points 99
 
   @spec run(%Game{}, String.t()) :: {:ok, %Player{}} | {:error, %Ecto.Changeset{}}
-  def run(game, player_name) do
+  def run(game, player_name, opts \\ []) do
     Repo.transaction(fn repo ->
       if game_already_started?(game) do
         Repo.rollback("game already started")
       else
-        case insert_player(repo, game, player_name) do
+        host = Keyword.get(opts, :host, false)
+
+        case insert_player(repo, game, player_name, host) do
           {:ok, player} -> player
           {:error, changeset} -> Repo.rollback(changeset)
         end
@@ -30,7 +32,7 @@ defmodule Pontinho.JoinGame do
     |> Kernel.>(0)
   end
 
-  defp insert_player(repo, game, player_name) do
+  defp insert_player(repo, game, player_name, host) do
     sequence = next_sequence(repo, game)
 
     %Player{}
@@ -42,6 +44,7 @@ defmodule Pontinho.JoinGame do
     |> put_change(:broke_times, 0)
     |> put_change(:points, @default_points)
     |> put_change(:playing, true)
+    |> put_change(:host, host)
     |> put_assoc(:game, game)
     |> repo.insert()
   end

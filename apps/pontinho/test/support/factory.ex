@@ -20,7 +20,8 @@ defmodule Pontinho.Factory do
       playing: true,
       points: 99,
       sequence: sequence(:sequence, & &1),
-      game: build(:game)
+      game: build(:game),
+      host: false
     }
   end
 

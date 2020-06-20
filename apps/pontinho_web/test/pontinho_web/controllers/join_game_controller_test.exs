@@ -9,7 +9,7 @@ defmodule PontinhoWeb.JoinGameControllerTest do
   describe "POST create" do
     test "returns 200 when params are valid", %{conn: conn} do
       %{id: game_id} = game = insert(:game, betting_table: [50, 100, 200, 400, 800, 1600])
-      player = insert(:player, name: "Player 1", game: game)
+      player = insert(:player, name: "Player 1", game: game, host: true)
 
       {:ok, _, _} =
         PlayerSocket
@@ -26,16 +26,28 @@ defmodule PontinhoWeb.JoinGameControllerTest do
                "betting_table" => [50, 100, 200, 400, 800, 1600],
                "player_id" => _,
                "players" => [
-                 %{"id" => _, "name" => "Player 1", "points" => 99, "playing" => true},
-                 %{"id" => _, "name" => "New Player", "points" => 99, "playing" => true}
+                 %{
+                   "id" => _,
+                   "name" => "Player 1",
+                   "points" => 99,
+                   "playing" => true,
+                   "host" => true
+                 },
+                 %{
+                   "id" => _,
+                   "name" => "New Player",
+                   "points" => 99,
+                   "playing" => true,
+                   "host" => false
+                 }
                ],
                "matches" => []
              } = json_response(conn, 200)
 
       assert_broadcast "player_joined", %{
         players: [
-          %{id: _, name: "Player 1", points: 99},
-          %{id: _, name: "New Player", points: 99}
+          %{id: _, name: "Player 1", points: 99, playing: true},
+          %{id: _, name: "New Player", points: 99, playing: true}
         ]
       }
     end

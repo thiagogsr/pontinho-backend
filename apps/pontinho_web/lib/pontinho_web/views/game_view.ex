@@ -27,7 +27,8 @@ defmodule PontinhoWeb.GameView do
       name: player.name,
       points: player.points,
       playing: player.playing,
-      balance: player.balance
+      balance: player.balance,
+      host: player.host
     }
   end
 
