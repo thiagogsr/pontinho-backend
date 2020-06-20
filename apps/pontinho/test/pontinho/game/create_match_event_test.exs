@@ -492,11 +492,12 @@ defmodule Pontinho.CreateMatchEventTest do
                CreateMatchEvent.run(match, match_player, nil, "ASK_BEAT", [])
 
       assert match_event.type == "ASK_BEAT"
+      assert %MatchPlayer{asked_beat: true} = Repo.get(MatchPlayer, match_player.id)
     end
 
-    test "returns error when there is no previous event" do
+    test "returns error when match player already asked beat" do
       match = insert(:match)
-      match_player = insert(:match_player, false_beat: false)
+      match_player = insert(:match_player, asked_beat: true)
 
       assert {:error, %Ecto.Changeset{} = changeset} =
                CreateMatchEvent.run(match, match_player, nil, "ASK_BEAT", [])
@@ -504,18 +505,7 @@ defmodule Pontinho.CreateMatchEventTest do
       assert %{cards: ["invalid operation"]} = errors_on(changeset)
     end
 
-    test "returns error when the previous event type is ASK_BEAT" do
-      match = insert(:match)
-      match_player = insert(:match_player, false_beat: false)
-      insert(:match_event, match: match, type: "ASK_BEAT")
-
-      assert {:error, %Ecto.Changeset{} = changeset} =
-               CreateMatchEvent.run(match, match_player, nil, "ASK_BEAT", [])
-
-      assert %{cards: ["invalid operation"]} = errors_on(changeset)
-    end
-
-    test "returns error when match player false bet before" do
+    test "returns error when match player false beat before" do
       match = insert(:match)
       match_player = insert(:match_player, false_beat: true)
 
@@ -1074,21 +1064,20 @@ defmodule Pontinho.CreateMatchEventTest do
   describe "FALSE_BEAT" do
     test "returns ok when match player asked to beat" do
       match = insert(:match)
-      match_player = insert(:match_player, false_beat: false)
-      insert(:match_event, match: match, match_player: match_player, type: "ASK_BEAT")
+      match_player = insert(:match_player, asked_beat: true, false_beat: false)
 
       assert {:ok, %MatchEvent{} = match_event} =
                CreateMatchEvent.run(match, match_player, nil, "FALSE_BEAT", [])
 
       assert match_event.type == "FALSE_BEAT"
 
-      assert %MatchPlayer{false_beat: true} = Repo.get(MatchPlayer, match_player.id)
+      assert %MatchPlayer{asked_beat: false, false_beat: true} =
+               Repo.get(MatchPlayer, match_player.id)
     end
 
     test "returns error when match player did not ask to beat" do
       match = insert(:match)
-      match_player = insert(:match_player, false_beat: false)
-      insert(:match_event, match: match, match_player: match_player, type: "DISCARD")
+      match_player = insert(:match_player, asked_beat: false, false_beat: false)
 
       assert {:error, %Ecto.Changeset{} = changeset} =
                CreateMatchEvent.run(match, match_player, nil, "FALSE_BEAT", [])

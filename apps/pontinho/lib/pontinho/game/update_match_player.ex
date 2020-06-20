@@ -10,7 +10,7 @@ defmodule Pontinho.UpdateMatchPlayer do
   @spec run(%MatchPlayer{}, map) :: {:ok, %MatchPlayer{}}
   def run(match_player, attributes) do
     match_player
-    |> cast(attributes, [:hand, :false_beat])
+    |> cast(attributes, [:hand, :asked_beat, :false_beat])
     |> Repo.update()
   end
 end
