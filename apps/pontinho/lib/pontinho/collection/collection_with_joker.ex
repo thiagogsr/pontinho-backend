@@ -6,10 +6,31 @@ defmodule Pontinho.CollectionWithJoker do
   alias Pontinho.Collection.ValidateSequence
   alias Pontinho.Deck
 
-  def validate(cards, values, suits, joker, beat) do
-    case values |> Enum.uniq() |> length() do
-      values_length when values_length in [1, 2] -> validate_trio(values_length, suits, beat)
-      _ -> validate_sequence(cards, joker, beat)
+  @doc """
+  It validates a collection that contains the match joker.
+
+  For collections with one unique value, ignoring the joker, it is a trio, else it is a sequence.
+
+  A trio with joker is valid if beat is true and if it has 2 or 3 suits, inclusing the joker suit.
+
+  A sequence with joker is valid if the cards sequence is valid and the joker is not in the corners, except when beat is true.
+  """
+  @spec validate(list(map), integer(), integer(), integer(), map(), boolean()) ::
+          {:ok, %{type: String.t()}} | {:error, String.t()}
+  def validate(
+        cards,
+        cards_except_joker_values_length,
+        cards_values_length,
+        cards_suits_length,
+        joker,
+        beat
+      ) do
+    case cards_except_joker_values_length do
+      1 ->
+        validate_trio(cards_values_length, cards_suits_length, beat)
+
+      _ ->
+        validate_sequence(cards, joker, beat)
     end
   end
 
@@ -39,21 +60,17 @@ defmodule Pontinho.CollectionWithJoker do
     end
   end
 
-  defp validate_trio(values_length, _suits, false = _beat) when values_length == 2 do
-    {:error, "invalid trio"}
-  end
-
-  defp validate_trio(_values_length, suits, true = _beat) do
-    case suits |> Enum.uniq() |> length() do
-      suits_length when suits_length in [2, 3] -> {:ok, %{type: "trio"}}
-      _ -> {:error, "invalid trio"}
+  defp validate_trio(cards_values_length, cards_suits_length, true = _beat) do
+    cond do
+      cards_values_length in [1, 2] && cards_suits_length in [2, 3] -> {:ok, %{type: "trio"}}
+      true -> {:error, "invalid trio"}
     end
   end
 
-  defp validate_trio(_values_length, suits, false = _beat) do
-    case suits |> Enum.uniq() |> length() do
-      3 -> {:ok, %{type: "trio"}}
-      _ -> {:error, "invalid trio"}
+  defp validate_trio(cards_values_length, cards_suits_length, false = _beat) do
+    cond do
+      cards_values_length == 1 && cards_suits_length == 3 -> {:ok, %{type: "trio"}}
+      true -> {:error, "invalid trio"}
     end
   end
 end

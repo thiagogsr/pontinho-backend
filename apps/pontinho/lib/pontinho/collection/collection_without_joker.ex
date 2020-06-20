@@ -5,9 +5,20 @@ defmodule Pontinho.CollectionWithoutJoker do
 
   alias Pontinho.Collection.ValidateSequence
 
-  def validate(cards, values, suits) do
-    case values |> Enum.uniq() |> length() do
-      1 -> validate_trio(suits)
+  @doc """
+  It validates a collection that does not contain the match joker.
+
+  For collections with one unique value, it is a trio, else it is a sequence.
+
+  A trio without joker is valid if it has 3 suits.
+
+  A sequence without joker is valid if the cards sequence is valid.
+  """
+  @spec validate(list(map), integer(), integer()) ::
+          {:ok, %{type: String.t()}} | {:error, String.t()}
+  def validate(cards, values_length, suits_length) do
+    case values_length do
+      1 -> validate_trio(suits_length)
       _ -> validate_sequence(cards)
     end
   end
@@ -19,8 +30,8 @@ defmodule Pontinho.CollectionWithoutJoker do
     end
   end
 
-  defp validate_trio(suits) do
-    case suits |> Enum.uniq() |> length() do
+  defp validate_trio(suits_length) do
+    case suits_length do
       3 -> {:ok, %{type: "trio"}}
       _ -> {:error, "invalid trio"}
     end

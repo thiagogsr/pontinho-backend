@@ -81,6 +81,19 @@ defmodule Pontinho.CollectionTest do
       assert {:ok, %{type: "sequence"}} = Collection.validate(cards, joker, beat)
     end
 
+    test "returns ok when it is a sequence with joker and other card with the same value" do
+      cards = [
+        %{"value" => "10", "suit" => "suits", "deck" => 1},
+        %{"value" => "10", "suit" => "hearts", "deck" => 1},
+        %{"value" => "Q", "suit" => "suits", "deck" => 1}
+      ]
+
+      joker = %{"value" => "10", "suit" => "hearts", "deck" => 1}
+
+      assert {:ok, %{type: "sequence"}} = Collection.validate(cards, joker, true)
+      assert {:ok, %{type: "sequence"}} = Collection.validate(cards, joker, false)
+    end
+
     test "returns error when it is a sequence with a joker in the corner and player does not beat" do
       cards = [
         %{"value" => "A", "suit" => "hearts", "deck" => 1},
@@ -94,7 +107,7 @@ defmodule Pontinho.CollectionTest do
       assert {:error, "joker cannot be in the corner"} = Collection.validate(cards, joker, beat)
     end
 
-    test "returns error when there are duplicated cards" do
+    test "returns error when there are duplicated cards in a trio" do
       cards = [
         %{"value" => "A", "suit" => "hearts", "deck" => 1},
         %{"value" => "A", "suit" => "hearts", "deck" => 1},

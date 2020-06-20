@@ -9,6 +9,12 @@ defmodule Pontinho.Collection.ValidateSequence do
   @ace_index Deck.value_index("A")
   @king_index Deck.value_index("K")
 
+  @doc """
+  Returns:
+    * :ok_with_joker when joker is present in cards and it is used as joker
+    * :ok_without_joker when joker is present in cards but acting as a regular card or when it is not present
+    * :error when the sequence is not valid
+  """
   @spec run(list(map), map | nil) :: :ok_with_joker | :ok_without_joker | :error
   def run(cards, joker \\ nil) do
     [first_card | tail_cards] = Enum.map(cards, &convert_card/1)
