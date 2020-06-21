@@ -11,8 +11,8 @@ defmodule Pontinho.Event.DropCollection do
     if validate_match_player(match_player, previous_event) &&
          validate_cards(match_player, cards, previous_event.taked_card) &&
          validate_operation(match, cards, previous_event) &&
-         validate_match_player_hand(match_player.hand, cards, previous_event) do
-      case Collection.validate(cards, match.joker, previous_event.type == "ASK_BEAT") do
+         validate_match_player_hand(match_player, cards) do
+      case Collection.validate(cards, match.joker, match_player.asked_beat) do
         {:ok, _} -> []
         {:error, error} -> [error]
       end
@@ -52,18 +52,17 @@ defmodule Pontinho.Event.DropCollection do
     end
   end
 
-  defp validate_match_player_hand(_match_player_hand, _cards, %{type: "ASK_BEAT"}), do: true
+  defp validate_match_player_hand(%{asked_beat: true}, _cards), do: true
 
-  defp validate_match_player_hand(match_player_hand, cards, _previous_event) do
+  defp validate_match_player_hand(%{hand: match_player_hand}, cards) do
     case Deck.remove_cards(match_player_hand, cards) do
       c when length(c) == 1 -> false
       _ -> true
     end
   end
 
-  def run(match, match_player, _match_collection, cards, previous_event) do
-    {:ok, %{type: type}} =
-      Collection.validate(cards, match.joker, previous_event.type == "ASK_BEAT")
+  def run(match, match_player, _match_collection, cards, _previous_event) do
+    {:ok, %{type: type}} = Collection.validate(cards, match.joker, match_player.asked_beat)
 
     match_player_cards = Deck.remove_cards(match_player.hand, cards)
 

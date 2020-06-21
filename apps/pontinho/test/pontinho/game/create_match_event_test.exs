@@ -260,11 +260,12 @@ defmodule Pontinho.CreateMatchEventTest do
              } = Repo.get(MatchCollection, match_collection.id)
     end
 
-    test "returns ok when the match player hand will have only one card but previous event is ASK_BEAT" do
+    test "returns ok when the match player hand will have only one card but match player asked beat" do
       match = insert(:match)
 
       match_player =
         insert(:match_player,
+          asked_beat: true,
           hand: [
             %{"value" => "2", "suit" => "diamonds", "deck" => 2},
             %{"value" => "Q", "suit" => "hearts", "deck" => 1}
@@ -317,6 +318,7 @@ defmodule Pontinho.CreateMatchEventTest do
 
       match_player =
         insert(:match_player,
+          asked_beat: false,
           hand: [
             %{"value" => "2", "suit" => "diamonds", "deck" => 2},
             %{"value" => "K", "suit" => "hearts", "deck" => 1},
@@ -853,11 +855,12 @@ defmodule Pontinho.CreateMatchEventTest do
       assert %MatchPlayer{hand: []} = Repo.get(MatchPlayer, match_player.id)
     end
 
-    test "returns ok when match player hand will have only one card but the previous event is ASK_BEAT" do
+    test "returns ok when match player hand will have only one card but the match player asked beat" do
       match = insert(:match)
 
       match_player =
         insert(:match_player,
+          asked_beat: true,
           hand: [
             %{"value" => "2", "suit" => "clubs", "deck" => 1},
             %{"value" => "3", "suit" => "clubs", "deck" => 1},
@@ -886,6 +889,7 @@ defmodule Pontinho.CreateMatchEventTest do
 
       match_player =
         insert(:match_player,
+          asked_beat: false,
           hand: [
             %{"value" => "2", "suit" => "clubs", "deck" => 1},
             %{"value" => "3", "suit" => "clubs", "deck" => 1},

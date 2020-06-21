@@ -9,9 +9,9 @@ defmodule Pontinho.Event.AddCardToCollection do
 
   def validate(match, match_player, _match_collection, cards, previous_event) do
     if validate_match_player(match_player, previous_event) &&
-         validate_match_player_hand(match_player.hand, cards, previous_event) &&
+         validate_match_player_hand(match_player, cards) &&
          validate_operation(match, cards, previous_event) do
-      case Collection.validate(cards, match.joker, previous_event.type == "ASK_BEAT") do
+      case Collection.validate(cards, match.joker, match_player.asked_beat) do
         {:ok, _} -> []
         {:error, error} -> [error]
       end
@@ -24,9 +24,9 @@ defmodule Pontinho.Event.AddCardToCollection do
     previous_event.match_player_id == match_player.id
   end
 
-  defp validate_match_player_hand(_match_player_hand, _cards, %{type: "ASK_BEAT"}), do: true
+  defp validate_match_player_hand(%{asked_beat: true}, _cards), do: true
 
-  defp validate_match_player_hand(match_player_hand, cards, _previous_event) do
+  defp validate_match_player_hand(%{hand: match_player_hand}, cards) do
     case Deck.remove_cards(match_player_hand, cards) do
       c when length(c) == 1 -> false
       _ -> true
